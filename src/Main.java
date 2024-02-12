@@ -1,69 +1,66 @@
-
 /**
- * Main
+ * The Main class represents the entry point of the program.
+ * It creates a graphical user interface (GUI) window for the compiler application.
  */
 import javax.swing.*;
 import java.awt.event.*;
- public class Main extends JFrame implements ActionListener {
 
-    JTextArea programaText;
-    JTable tabla;
-
-    public Main() {
-        JPanel contentPane = new JPanel();
-        add(contentPane);
-        contentPane.setLayout(null);
-
-        JLabel label = new JLabel("program");
-        label.setBounds(60, 54, 100, 20);
-        contentPane.add(label);
-                
-        programaText = new JTextArea();
-        programaText.setBounds(60, 80, 200, 250);
-        contentPane.add(programaText);
-        programaText.transferFocus();
-
-        JButton button = new JButton("Scanner");
-        button.setBounds(400, 52, 100, 20);
-        contentPane.add(button);
-        button.addActionListener(this);
-
-        tabla = new JTable();
-        tabla.setBounds(386, 80, 200, 250);
-        contentPane.add(tabla);
-
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        this.setTitle("Compilador");
-        setSize(1000, 800);
-        setVisible(true);
-
-        
-    }
-
+public class Main {
     public static void main(String[] args) {
-        javax.swing.SwingUtilities.invokeLater(Main::new);
-    }
+        JFrame miVentana = new JFrame("Compilador");
+        miVentana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        miVentana.setSize(1600, 1000);
+        miVentana.setVisible(true);
+        miVentana.setResizable(false);
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        Scanner scanner = new Scanner();
-        Token[] tokens = scanner.scanear(programaText.getText());
-        for (Token token : tokens) {
-            System.out.println(token);
-        }
+        JLabel label = new JLabel("Programa");
+        miVentana.add(label);
+        label.setBounds(40, 40, 100, 30);
+        //panel Programa
+        JLayeredPane panelPrograma = new JLayeredPane();
+        miVentana.add(panelPrograma);
+        int posx = 40;
+        int posy = 80;
+        int ancho = 250;
+        int alto = 400;
+        panelPrograma.setBounds(posx, posy, ancho, alto);
+        JTextArea textArea = new JTextArea();
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        scrollPane.setBounds(posx, posy, ancho, alto);
+        panelPrograma.add(scrollPane);
 
-        String[] columnas = {"Tipo", "Valor"};
-        String[][] datos = new String[tokens.length][2];
-        for (int i = 0; i < tokens.length; i++) {
-            datos[i][0] = tokens[i].getTipo().toString();
-            datos[i][1] = tokens[i].getValor();
-        }
-        tabla = new JTable(datos, columnas);
-        tabla.setBounds(386, 80, 200, 250);
-        add(tabla);
+        JButton botonCompilar = new JButton("Compilar");
+        miVentana.add(botonCompilar);
+        botonCompilar.setBounds(350, 40, 100, 30);
+        botonCompilar.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                
+                ScannerNewIdea scanner = new ScannerNewIdea();
+                String texto = textArea.getText();
+                Token[] tokens = scanner.scanear(texto);
+                String[] columnas = {"Token", "Token Type"};
+                String[][] datos = new String[tokens.length][2];
+                for (int i = 0; i < tokens.length; i++) {
+                    datos[i][1] = tokens[i].getTipo().toString();
+                    datos[i][0] = tokens[i].getValor();
+                }
+                JTable tabla = new JTable(datos, columnas);
+                JScrollPane scrollTabla = new JScrollPane(tabla);
+                miVentana.add(scrollTabla);
+                scrollTabla.setBounds(350, 80, 300, 400);
 
-
+                JButton botonLimpiar = new JButton("Limpiar");
+                miVentana.add(botonLimpiar);
+                botonLimpiar.setBounds(500, 40, 100, 30);
+                botonLimpiar.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                                miVentana.remove(scrollTabla);
+                                miVentana.remove(botonLimpiar);
+                                miVentana.repaint();
+                    }
+                });
+            }
+        });
         
     }
-    
 }
