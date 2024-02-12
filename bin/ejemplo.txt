@@ -1,0 +1,9 @@
+xdxdd ini{
+    a = 1 + 3;
+    b = a + 3;
+    if(a>10){
+        astro = 1
+    }else{
+        a = 15
+    }
+}
