@@ -12,8 +12,6 @@ public class ScannerNewIdea{
             }else{
                 posicion = tokenizeCharacter(c, source, posicion, tokens);
             }
-            
-           
 
         }
         return tokens.toArray(new Token[tokens.size()]);
@@ -22,7 +20,13 @@ public class ScannerNewIdea{
     private int tokenizeCharacter(char c, String source, int posicion, ArrayList<Token> tokens) {
         if (c == 'i' && source.substring(posicion, Math.min(posicion + 3, source.length())).equals("ini")&& (Character.isWhitespace(source.charAt(posicion + 4))||source.charAt(posicion+4)=='{' )) {
             return tokenizeIni(posicion, tokens);
-        } else if (Character.isLetter(c)) {
+        } else if (source.substring(posicion, Math.min(posicion + 2, source.length())).equals("if") && (Character.isWhitespace(source.charAt(posicion + 2)) || source.charAt(posicion + 2) == '(')) {
+            tokens.add(new Token(TokenType.IF, "if"));
+            return posicion + 2;
+        } else if (source.substring(posicion, Math.min(posicion + 4, source.length())).equals("else") && (Character.isWhitespace(source.charAt(posicion + 4)) || source.charAt(posicion + 4) == '{')) {
+            tokens.add(new Token(TokenType.ELSE, "else"));
+            return posicion + 4;
+        }else if (Character.isLetter(c)) {
             return tokenizeIdentifier(source, posicion, tokens);
         } else if (Character.isDigit(c)) {
             return tokenizeNumber(source, posicion, tokens);

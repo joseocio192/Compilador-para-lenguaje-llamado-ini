@@ -1,9 +1,13 @@
-54 ini{
-    a = 1 + a3;
-    b = a + 3;
+//ejemplo
+ini{
+    int a = 1 + a;
+    int b = a + 3;
+    int astro;
     if(a>10){
-        astro = 1
+        astro = 5
     }else{
-        a = 15
+        astro = 1;
     }
+    mostrar(astro);
 }
+
