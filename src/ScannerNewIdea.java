@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 
 public class ScannerNewIdea{
-    
+
     public Token[] scanear(String source) {
         int posicion = 0;
         ArrayList<Token> tokens = new ArrayList<>();
@@ -12,21 +12,25 @@ public class ScannerNewIdea{
             }else{
                 posicion = tokenizeCharacter(c, source, posicion, tokens);
             }
-
         }
         return tokens.toArray(new Token[tokens.size()]);
     }
 
     private int tokenizeCharacter(char c, String source, int posicion, ArrayList<Token> tokens) {
-        if (c == 'i' && source.substring(posicion, Math.min(posicion + 3, source.length())).equals("ini")&& (Character.isWhitespace(source.charAt(posicion + 4))||source.charAt(posicion+4)=='{' )) {
+        if (isIniKeyword(c, source, posicion)) {
             return tokenizeIni(posicion, tokens);
-        } else if (source.substring(posicion, Math.min(posicion + 2, source.length())).equals("if") && (Character.isWhitespace(source.charAt(posicion + 2)) || source.charAt(posicion + 2) == '(')) {
-            tokens.add(new Token(TokenType.IF, "if"));
-            return posicion + 2;
-        } else if (source.substring(posicion, Math.min(posicion + 4, source.length())).equals("else") && (Character.isWhitespace(source.charAt(posicion + 4)) || source.charAt(posicion + 4) == '{')) {
-            tokens.add(new Token(TokenType.ELSE, "else"));
-            return posicion + 4;
-        }else if (Character.isLetter(c)) {
+        } else if (isIfKeyword(c, source, posicion)) {
+            return tokenizeIf(posicion, tokens);
+        } else if (isTokenString(c, source, posicion)) {
+            return tokenizeString(posicion, tokens);
+            
+        }else if (isElseKeyword(c, source, posicion)) {
+            return tokenizeElse(posicion, tokens);
+        } else if (isMostrarKeyword(c, source, posicion)) {
+            return tokenizeMostrar(posicion, tokens);
+        } else if (isIntKeyword(c, source, posicion)) {
+            return tokenizeInt(posicion, tokens);
+        } else if (Character.isLetter(c)) {
             return tokenizeIdentifier(source, posicion, tokens);
         } else if (Character.isDigit(c)) {
             return tokenizeNumber(source, posicion, tokens);
@@ -35,10 +39,58 @@ public class ScannerNewIdea{
         }
     }
 
+    private int tokenizeString(int posicion, ArrayList<Token> tokens) {
+        tokens.add(new Token(TokenType.PR, "string"));
+        return posicion + 6;
+    }
+
+    private boolean isTokenString(char c, String source, int posicion) {
+        return source.substring(posicion, Math.min(posicion + 6, source.length())).equals("string") && (Character.isWhitespace(source.charAt(posicion + 6)) || source.charAt(posicion + 6) == '(');
+    }
+
+    private boolean isIniKeyword(char c, String source, int posicion) {
+        return c == 'i' && source.substring(posicion, Math.min(posicion + 3, source.length())).equals("ini") && (Character.isWhitespace(source.charAt(posicion + 4)) || source.charAt(posicion + 4) == '{');
+    }
+
+    private boolean isIfKeyword(char c, String source, int posicion) {
+        return source.substring(posicion, Math.min(posicion + 2, source.length())).equals("if") && (Character.isWhitespace(source.charAt(posicion + 2)) || source.charAt(posicion + 2) == '(');
+    }
+
+    private boolean isElseKeyword(char c, String source, int posicion) {
+        return source.substring(posicion, Math.min(posicion + 4, source.length())).equals("else") && (Character.isWhitespace(source.charAt(posicion + 4)) || source.charAt(posicion + 4) == '{');
+    }
+
+    private boolean isMostrarKeyword(char c, String source, int posicion) {
+        return source.substring(posicion, Math.min(posicion + 7, source.length())).equals("mostrar") && (Character.isWhitespace(source.charAt(posicion + 7)) || source.charAt(posicion + 7) == '(');
+    }
+
+    private boolean isIntKeyword(char c, String source, int posicion) {
+        return source.substring(posicion, Math.min(posicion + 3, source.length())).equals("int");
+    }
+
+    private int tokenizeInt(int posicion, ArrayList<Token> tokens) {
+        tokens.add(new Token(TokenType.PR, "int"));
+        return posicion + 3;
+    }
+
+    private int tokenizeMostrar(int posicion, ArrayList<Token> tokens) {
+        tokens.add(new Token(TokenType.PR, "mostrar"));
+        return posicion + 7;
+    }
+
+    private int tokenizeElse(int posicion, ArrayList<Token> tokens) {
+        tokens.add(new Token(TokenType.PR, "else"));
+        return posicion + 4;
+    }
+
+    private int tokenizeIf(int posicion, ArrayList<Token> tokens) {
+        tokens.add(new Token(TokenType.PR, "if"));
+        return posicion + 2;
+    }
+
     private int tokenizeIni(int posicion, ArrayList<Token> tokens) {
         //identificar si ini no esta mal escrito, y si si tirar error
-        
-        tokens.add(new Token(TokenType.INI, "ini"));
+        tokens.add(new Token(TokenType.PR, "ini"));
         return posicion + 3;
     }
 
@@ -61,26 +113,45 @@ public class ScannerNewIdea{
                 type = TokenType.LLAVEDER;
                 break;
             case '=':
-                type = TokenType.IGUAL;
+                if (source.charAt(posicion + 1) == '>'){
+                    tokens.add(new Token(TokenType.CO, "=>"));
+                    return posicion + 2;
+                }
+                if (source.charAt(posicion + 1) == '='){
+                    tokens.add(new Token(TokenType.CO, "=="));
+                    return posicion + 1;
+                } else {
+                    type = TokenType.OP;
+                }
                 break;
             case '+':
-                type = TokenType.MAS;
+                type = TokenType.OP;
                 break;
             case '-':
-                type = TokenType.MENOS;
+                type = TokenType.OP;
                 break;
             case '*':
-                type = TokenType.MULT;
+                type = TokenType.OP;
                 break;
             case '/':
-                type = TokenType.DIV;
+                type = TokenType.OP;
                 break;
             case '>':
-                type = TokenType.MAYORQUE;
+                type = TokenType.CO;
                 break;
             case '<':
-                type = TokenType.MENORQUE;
+                if (source.charAt(posicion + 1) == '='){
+                    tokens.add(new Token(TokenType.CO, "<="));
+                    return posicion + 2;
+                }
+                type = TokenType.CO;
                 break;
+            case '!':
+                if (source.charAt(posicion + 1) == '='){
+                    tokens.add(new Token(TokenType.CO, "!="));
+                    return posicion + 1;
+                }
+                break; 
         }
         if (type != null) {
             tokens.add(new Token(type, String.valueOf(c)));

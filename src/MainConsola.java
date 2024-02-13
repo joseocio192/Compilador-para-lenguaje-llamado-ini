@@ -2,7 +2,7 @@ import java.io.*;
 
 public class MainConsola {
     public static void main(String[] args) {
-        File file = new File("src/ejemplo.txt");
+        File file = new File("doc/ejemplo.txt");
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String st;
             StringBuilder source = new StringBuilder(); // Use StringBuilder instead of String

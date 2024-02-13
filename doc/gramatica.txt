@@ -3,15 +3,16 @@
 program -> ini_block
 ini_block -> "ini" "{" statements "}"
 statements -> statement statements | statement
-statement -> variable_declaration | assignment | if_statement | function_call
-variable_declaration -> type identifier "=" expression ";"
+statement -> variable_declaration | assignment | if_statement | printing
+variable_declaration -> type identifier "=" expression ";" | type identifier ";"
 assignment -> identifier "=" expression ";"
 if_statement -> "if" "(" condition ")" "{" statements "}"
               | "if" "(" condition ")" "{" statements "}" "else" "{" statements "}"
-function_call -> identifier "(" arguments ")" ";"
+for_statement -> "for" "(" variable_declaration ";" condition ";" assignment ")" "{" statements "}"
+while_statement -> "while" "(" condition ")" "{" statements "}"
+printing -> mostrar "(" identifier ")" ";"
 arguments -> expression arguments | expression
-expression -> term "+" expression | term
-term -> factor
+expression -> factor operator expression | factor
 factor -> identifier | number | "(" expression ")"
 condition -> expression comparison_operator expression
 operator -> "+"
@@ -21,7 +22,7 @@ operator -> "+"
           | "^"
 comparison_operator -> ">"
                      | "<"
-                     | ">="
+                     | "=>"
                      | "<="
                      | "=="
                      | "!="

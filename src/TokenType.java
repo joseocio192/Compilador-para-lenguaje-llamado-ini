@@ -3,10 +3,7 @@ public enum TokenType {
     INI,
     NUMEROS,
     IGUAL,
-    MAS,
-    MENOS,
-    MULT,
-    DIV,
+    CO, //COMPARASION OPERATOR
     MAYORQUE,
     MENORQUE,
     PARI,
@@ -14,7 +11,7 @@ public enum TokenType {
     LLAVEDER,
     LLAVEIZQ,
     PUNTOYCOMA,
-    IF,
-    ELSE,
-    IDENTIFICADOR
+    OP,
+    IDENTIFICADOR, 
+    PR
 }
