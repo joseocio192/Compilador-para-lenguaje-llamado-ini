@@ -1,13 +1,12 @@
 ini{
-    string x;
-    int a = 1 + a;
+    string x = "hola";
     int b = a + 3;
-    int astro;
     if(a <= 10){
-        astro = 5
+        b = 5
     }else{
-        astro = 1;
+        b = 1;
     }
-    mostrar(astro);
+    mostrar(a);
+    mostrar(x);
 }
 

@@ -97,6 +97,9 @@ public class ScannerNewIdea{
     private int tokenizeSymbol(char c, String source, int posicion, ArrayList<Token> tokens) {
         TokenType type = null;
         switch (c) {
+            case '"':
+                type = TokenType.COMILLA;
+                break;
             case ';':
                 type = TokenType.PUNTOYCOMA;
                 break;
@@ -180,7 +183,12 @@ public class ScannerNewIdea{
         if (position < source.length() && Character.isLetter(source.charAt(position))) {
             throw new UnsupportedOperationException("Identificador no valido: " + source.substring(start, position + 1));
         }
-        tokens.add(new Token(TokenType.NUMEROS, source.substring(start, position)));
+        tokens.add(new Token(TokenType.NUMBER, source.substring(start, position)));
         return position;
+    }
+
+    public String leerArchivo(String ruta) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'leerArchivo'");
     }
 }

@@ -1,42 +1,115 @@
-/**
- * The Main class represents the entry point of the program.
- * It creates a graphical user interface (GUI) window for the compiler application.
- */
-import javax.swing.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.WindowConstants;
+
 
 public class Main {
-    public static void main(String[] args) {
+    public Main() {
+        //la ventana
         JFrame miVentana = new JFrame("Compilador");
-        miVentana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        miVentana.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         miVentana.setSize(1600, 1000);
-        miVentana.setVisible(true);
         miVentana.setResizable(false);
+        StringBuilder texto = new StringBuilder(); // Texto que se agregará al JTextArea
+        //menu
+        JMenuBar menu = new JMenuBar();
+        miVentana.setJMenuBar(menu);
+        JMenu archivo = new JMenu("Archivo");
+        menu.add(archivo);
+        JMenuItem abrir = new JMenuItem("Abrir");
+        archivo.add(abrir);
+        JMenuItem guardar = new JMenuItem("Guardar");
+        archivo.add(guardar);
+        JMenuItem salir = new JMenuItem("Salir");
+        archivo.add(salir);
 
-        JLabel label = new JLabel("Programa");
-        miVentana.add(label);
-        label.setBounds(40, 40, 100, 30);
-        //panel Programa
-        JLayeredPane panelPrograma = new JLayeredPane();
-        miVentana.add(panelPrograma);
-        int posx = 40;
-        int posy = 80;
-        int ancho = 250;
-        int alto = 400;
-        panelPrograma.setBounds(posx, posy, ancho, alto);
-        JTextArea textArea = new JTextArea();
-        JScrollPane scrollPane = new JScrollPane(textArea);
-        scrollPane.setBounds(posx, posy, ancho, alto);
-        panelPrograma.add(scrollPane);
+        //label y botones
+        JLayeredPane paneStart = new JLayeredPane();
+        miVentana.add(paneStart);
 
         JButton botonCompilar = new JButton("Compilar");
-        miVentana.add(botonCompilar);
+        paneStart.add(botonCompilar);
         botonCompilar.setBounds(350, 40, 100, 30);
+
+        JButton botonLimpiar = new JButton("Limpiar");
+        paneStart.add(botonLimpiar);
+        botonLimpiar.setBounds(500, 40, 100, 30);
+
+        JLabel label = new JLabel("Programa");
+        label.setBounds(40, 40, 100, 30);
+        paneStart.add(label);
+
+        //panel Programa
+        JTextArea textAreaProgram = new JTextArea();
+        JScrollPane scrollPane = new JScrollPane(textAreaProgram);
+        scrollPane.setBounds(40, 80, 250, 400);
+        paneStart.add(scrollPane);
+
+        //acciones
+                //menu abrir
+                abrir.addActionListener(e -> {
+                    JFileChooser fileChooser = new JFileChooser();
+                    fileChooser.showOpenDialog(miVentana);
+                    File x = fileChooser.getSelectedFile();
+                    StringBuilder textox = new StringBuilder(); // Use StringBuilder instead of concatenating strings
+                    try (FileReader fr = new FileReader(x); BufferedReader br = new BufferedReader(fr)) {
+                        String line;
+                        while ((line = br.readLine()) != null) {
+                            textox.append(line).append("\n"); // Append line to StringBuilder
+                        }
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                    texto.append(textox); // Append textox to texto
+                    textAreaProgram.setText(texto.toString()); // Set textArea to texto
+                });
+                //menu guardar
+                guardar.addActionListener(e -> {
+                    JFileChooser fileChooser = new JFileChooser();
+                    fileChooser.showSaveDialog(miVentana);
+                    File x = fileChooser.getSelectedFile();
+                    try {
+                        if (x.createNewFile()) {
+                            System.out.println("File created: " + x.getName());
+                        } else {
+                            System.out.println("File already exists.");
+                        }
+                        // Create a FileWriter object
+                        FileWriter writer = new FileWriter(x);
+                        // Write the content of textAreaProgram to the file
+                        writer.write(textAreaProgram.getText());
+                        // Close the writer
+                        writer.close();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                });
+                //menu salir
+                salir.addActionListener(e -> System.exit(0));
+
+        //boton compilar
         botonCompilar.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 
                 ScannerNewIdea scanner = new ScannerNewIdea();
-                String texto = textArea.getText();
+                String texto = textAreaProgram.getText();
                 Token[] tokens = scanner.scanear(texto);
                 String[] columnas = {"Token", "Token Type"};
                 String[][] datos = new String[tokens.length][2];
@@ -48,10 +121,6 @@ public class Main {
                 JScrollPane scrollTabla = new JScrollPane(tabla);
                 miVentana.add(scrollTabla);
                 scrollTabla.setBounds(350, 80, 300, 400);
-
-                JButton botonLimpiar = new JButton("Limpiar");
-                miVentana.add(botonLimpiar);
-                botonLimpiar.setBounds(500, 40, 100, 30);
                 botonLimpiar.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                                 miVentana.remove(scrollTabla);
@@ -61,6 +130,10 @@ public class Main {
                 });
             }
         });
-        
+        miVentana.setVisible(true);
+    }
+
+    public static void main(String[] args) {
+        new Main();
     }
 }

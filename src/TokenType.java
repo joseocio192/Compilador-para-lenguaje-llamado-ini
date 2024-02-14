@@ -1,16 +1,16 @@
 
 public enum TokenType {
     INI,
-    NUMEROS,
+    NUMBER,
+    STRING,
     IGUAL,
     CO, //COMPARASION OPERATOR
-    MAYORQUE,
-    MENORQUE,
     PARI,
     PARD,
     LLAVEDER,
     LLAVEIZQ,
     PUNTOYCOMA,
+    COMILLA,
     OP,
     IDENTIFICADOR, 
     PR
