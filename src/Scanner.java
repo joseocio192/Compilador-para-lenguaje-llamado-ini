@@ -172,7 +172,7 @@ public class Scanner{
             posicion++;
         }
         if (type == null) {
-            throw new UnsupportedOperationException("Caracter no soportado: " + c);
+            throw new UnsupportedOperationException("Caracter no soportado: " + c +" en la posicion: "+posicion);
         }
         return posicion;
     }

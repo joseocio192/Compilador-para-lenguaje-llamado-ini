@@ -28,6 +28,7 @@ public class Main {
         JFrame miVentana = new JFrame("Compilador");
         miVentana.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         miVentana.setSize(1600, 1000);
+        miVentana.setIconImage(new javax.swing.ImageIcon(getClass().getResource("icon2.png")).getImage()); 
         //miVentana.setResizable(false);
         StringBuilder texto = new StringBuilder(); // Texto que se agregará al JTextArea
         //menu
