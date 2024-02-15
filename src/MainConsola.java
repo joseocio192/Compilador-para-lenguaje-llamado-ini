@@ -9,7 +9,7 @@ public class MainConsola {
             while ((st = br.readLine()) != null) {
                 source.append(st).append("\n"); // Append to StringBuilder
             }
-            ScannerNewIdea scanner = new ScannerNewIdea();
+            Scanner scanner = new Scanner();
             Token[] tokens = scanner.scanear(source.toString()); // Convert StringBuilder to String
             for (int i = 0; i < tokens.length; i++) {
                 System.out.println(tokens[i].getValor() + " " + tokens[i].getTipo().toString());

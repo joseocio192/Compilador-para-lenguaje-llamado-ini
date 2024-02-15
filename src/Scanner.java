@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class ScannerNewIdea{
+public class Scanner{
 
     public Token[] scanear(String source) {
         int posicion = 0;
@@ -23,20 +23,34 @@ public class ScannerNewIdea{
             return tokenizeIf(posicion, tokens);
         } else if (isTokenString(c, source, posicion)) {
             return tokenizeString(posicion, tokens);
-            
         }else if (isElseKeyword(c, source, posicion)) {
             return tokenizeElse(posicion, tokens);
         } else if (isMostrarKeyword(c, source, posicion)) {
             return tokenizeMostrar(posicion, tokens);
         } else if (isIntKeyword(c, source, posicion)) {
             return tokenizeInt(posicion, tokens);
-        } else if (Character.isLetter(c)) {
+        } else if (c == '"') {
+            return tokenizeStringValue(posicion,source, tokens);
+        }else if (Character.isLetter(c)) {
             return tokenizeIdentifier(source, posicion, tokens);
         } else if (Character.isDigit(c)) {
             return tokenizeNumber(source, posicion, tokens);
         } else {
             return tokenizeSymbol(c, source, posicion, tokens);
         }
+    }
+
+    private int tokenizeStringValue(int posicion, String source, ArrayList<Token> tokens) {
+        int start = posicion;
+        posicion++;
+        while (posicion < source.length() && source.charAt(posicion) != '"') {
+            posicion++;
+        }
+        if (posicion == source.length()) {
+            throw new UnsupportedOperationException("Cadena no cerrada: " + source.substring(start, posicion));
+        }
+        tokens.add(new Token(TokenType.STRING, source.substring(start, posicion+1)));
+        return posicion + 1;
     }
 
     private int tokenizeString(int posicion, ArrayList<Token> tokens) {
@@ -49,7 +63,7 @@ public class ScannerNewIdea{
     }
 
     private boolean isIniKeyword(char c, String source, int posicion) {
-        return c == 'i' && source.substring(posicion, Math.min(posicion + 3, source.length())).equals("ini") && (Character.isWhitespace(source.charAt(posicion + 4)) || source.charAt(posicion + 4) == '{');
+        return source.substring(posicion, Math.min(posicion + 3, source.length())).equals("ini") && (Character.isWhitespace(source.charAt(posicion + 3)) || source.charAt(posicion + 3) == '{');
     }
 
     private boolean isIfKeyword(char c, String source, int posicion) {
@@ -97,9 +111,6 @@ public class ScannerNewIdea{
     private int tokenizeSymbol(char c, String source, int posicion, ArrayList<Token> tokens) {
         TokenType type = null;
         switch (c) {
-            case '"':
-                type = TokenType.COMILLA;
-                break;
             case ';':
                 type = TokenType.PUNTOYCOMA;
                 break;
@@ -185,10 +196,5 @@ public class ScannerNewIdea{
         }
         tokens.add(new Token(TokenType.NUMBER, source.substring(start, position)));
         return position;
-    }
-
-    public String leerArchivo(String ruta) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'leerArchivo'");
     }
 }

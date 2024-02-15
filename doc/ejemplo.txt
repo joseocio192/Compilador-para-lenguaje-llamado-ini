@@ -1,12 +1,8 @@
 ini{
     string x = "hola";
-    int b = a + 3;
-    if(a <= 10){
+    int b = 3;
+    if(b <= 10){
         b = 5
-    }else{
-        b = 1;
     }
-    mostrar(a);
-    mostrar(x);
 }
 
