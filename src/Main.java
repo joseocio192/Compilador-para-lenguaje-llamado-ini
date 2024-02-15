@@ -14,6 +14,7 @@ import javax.swing.JLayeredPane;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
@@ -34,6 +35,8 @@ public class Main {
         miVentana.setJMenuBar(menu);
         JMenu archivo = new JMenu("Archivo");
         menu.add(archivo);
+        JMenuItem nuevo = new JMenuItem("Nuevo");
+        archivo.add(nuevo);
         JMenuItem abrir = new JMenuItem("Abrir");
         archivo.add(abrir);
         JMenuItem guardar = new JMenuItem("Guardar");
@@ -108,6 +111,8 @@ public class Main {
                 });
                 //menu salir
                 salir.addActionListener(e -> System.exit(0));
+                //menu nuevo
+                nuevo.addActionListener(e -> textAreaProgram.setText(""));
 
         //boton compilar
         botonCompilar.addActionListener(new ActionListener() {
@@ -115,23 +120,30 @@ public class Main {
                 
                 Scanner scanner = new Scanner();
                 String texto = textAreaProgram.getText() + " ";
-                Token[] tokens = scanner.scanear(texto);
-                String[] columnas = {"Token", "Token Type"};
-                String[][] datos = new String[tokens.length][2];
-                for (int i = 0; i < tokens.length; i++) {
-                    datos[i][1] = tokens[i].getTipo().toString();
-                    datos[i][0] = tokens[i].getValor();
-                }
-                JTable tabla = new JTable(datos, columnas);
-                JScrollPane scrollTabla = new JScrollPane(tabla);
-                paneStart.add(scrollTabla);
-                scrollTabla.setBounds(350, 80, 300, 400);
-                botonLimpiar.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                                paneStart.remove(scrollTabla);
-                                miVentana.repaint();
+                try {
+                    Token[] tokens = scanner.scanear(texto);
+                    String[] columnas = {"Token", "Token Type"};
+                    String[][] datos = new String[tokens.length][2];
+                    for (int i = 0; i < tokens.length; i++) {
+                        datos[i][1] = tokens[i].getTipo().toString();
+                        datos[i][0] = tokens[i].getValor();
                     }
-                });
+                    JTable tabla = new JTable(datos, columnas);
+                    JScrollPane scrollTabla = new JScrollPane(tabla);
+                    paneStart.add(scrollTabla);
+                    scrollTabla.setBounds(350, 80, 300, 400);
+                    botonLimpiar.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                                    paneStart.remove(scrollTabla);
+                                    miVentana.repaint();
+                        }
+                    });
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(null, "Algo a salido mal: "+ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+
+                }
+               
+
             }
         });
         miVentana.setVisible(true);
