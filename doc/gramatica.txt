@@ -17,7 +17,6 @@ type -> "int"
 identifier -> [char][char | number | _]*
 expression -> factor operator expression | factor
 string -> """ [char+ | " "| number]+ """
-char ->  [a-zA-Z]
 number -> [0-9]+
 arguments -> expression arguments | expression
 factor -> identifier | number | "(" expression ")"

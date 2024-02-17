@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -49,9 +50,13 @@ public class Main {
         JLayeredPane paneStart = new JLayeredPane();
         miVentana.add(paneStart);
 
-        JButton botonCompilar = new JButton("Compilar");
-        paneStart.add(botonCompilar);
-        botonCompilar.setBounds(350, 40, 100, 30);
+        JButton botonLexico = new JButton("Lexico");
+        paneStart.add(botonLexico);
+        botonLexico.setBounds(350, 40, 100, 30);
+
+        JButton botonParser = new JButton("Parser");
+        paneStart.add(botonParser);
+        botonParser.setBounds(650, 40, 100, 30);
 
         JButton botonLimpiar = new JButton("Limpiar");
         paneStart.add(botonLimpiar);
@@ -116,7 +121,7 @@ public class Main {
                 nuevo.addActionListener(e -> textAreaProgram.setText(""));
 
         //boton compilar
-        botonCompilar.addActionListener(new ActionListener() {
+        botonLexico.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 
                 Scanner scanner = new Scanner();
@@ -147,6 +152,22 @@ public class Main {
 
             }
         });
+        //boton parser
+        botonParser.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String texto = textAreaProgram.getText() + " ";
+                Scanner scanner = new Scanner();
+                Token[] tokens = scanner.scanear(texto);
+                Parser parser = new Parser(tokens);
+                try {
+                    parser.parse();
+                    JOptionPane.showMessageDialog(null, "El programa es correcto", "Correcto", JOptionPane.INFORMATION_MESSAGE);
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(null, "Algo a salido mal: "+ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
         miVentana.setVisible(true);
     }
 

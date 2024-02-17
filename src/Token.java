@@ -17,6 +17,6 @@ public class Token {
 
     public String toString() {
         return String.format("(%s, %s)", tipo, valor);
-    }
+    }  
 
 }

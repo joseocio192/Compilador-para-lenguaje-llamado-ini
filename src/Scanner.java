@@ -22,14 +22,16 @@ public class Scanner{
         } else if (isIfKeyword(c, source, posicion)) {
             return tokenizeIf(posicion, tokens);
         } else if (isTokenString(c, source, posicion)) {
-            return tokenizeString(posicion, tokens);
+            return tokenizeStringType(posicion, tokens);
         }else if (isElseKeyword(c, source, posicion)) {
             return tokenizeElse(posicion, tokens);
         } else if (isMostrarKeyword(c, source, posicion)) {
             return tokenizeMostrar(posicion, tokens);
         } else if (isIntKeyword(c, source, posicion)) {
             return tokenizeInt(posicion, tokens);
-        } else if (c == '"') {
+        } else if (isStringKeyword(c,source, posicion)) {
+            return tokenizeString(posicion, tokens);
+        }else if (c == '"') {
             return tokenizeStringValue(posicion,source, tokens);
         }else if (Character.isLetter(c)) {
             return tokenizeIdentifier(source, posicion, tokens);
@@ -38,6 +40,15 @@ public class Scanner{
         } else {
             return tokenizeSymbol(c, source, posicion, tokens);
         }
+    }
+
+    private int tokenizeString(int posicion, ArrayList<Token> tokens) {
+        tokens.add(new Token(TokenType.PR, "string"));
+        return posicion + 6;
+    }
+
+    private boolean isStringKeyword(char c, String source, int posicion) {
+        return source.substring(posicion, Math.min(posicion + 6, source.length())).equals("string") && (Character.isWhitespace(source.charAt(posicion + 6)) || source.charAt(posicion + 6) == '(');
     }
 
     private int tokenizeStringValue(int posicion, String source, ArrayList<Token> tokens) {
@@ -53,7 +64,7 @@ public class Scanner{
         return posicion + 1;
     }
 
-    private int tokenizeString(int posicion, ArrayList<Token> tokens) {
+    private int tokenizeStringType(int posicion, ArrayList<Token> tokens) {
         tokens.add(new Token(TokenType.PR, "string"));
         return posicion + 6;
     }
