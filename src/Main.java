@@ -152,6 +152,7 @@ public class Main {
 
             }
         });
+
         //boton parser
         botonParser.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
