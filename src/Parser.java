@@ -19,16 +19,12 @@ public class Parser {
 
     private boolean iniBlock() {
         if (match(TokenType.PR) && match(TokenType.LLAVEIZQ)) {
-            if (tokens.get(index).getTipo().equals(TokenType.LLAVEDER) && index == tokens.size() - 1) {
-                return true;
-            }
             if (statements()) {
                 return true;
             }
             if (match(TokenType.LLAVEDER)) {
                 return true;
             }
-            
             return false;
         }else{
             System.out.println("Error: Expected PR LLAVEIZQ but found " + tokens.get(index).getValor() + " at token "+index);
