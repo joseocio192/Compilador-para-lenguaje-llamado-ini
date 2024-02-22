@@ -43,7 +43,7 @@ public class Scanner{
     }
 
     private int tokenizeString(int posicion, ArrayList<Token> tokens) {
-        tokens.add(new Token(TokenType.PR, "string"));
+        tokens.add(new Token(TokenType.ASIGNACION, "ASIGNACION"));
         return posicion + 6;
     }
 
@@ -60,7 +60,7 @@ public class Scanner{
         if (posicion == source.length()) {
             throw new UnsupportedOperationException("Cadena no cerrada: " + source.substring(start, posicion));
         }
-        tokens.add(new Token(TokenType.STRING, source.substring(start, posicion+1)));
+        tokens.add(new Token(TokenType.ASIGNACION, source.substring(start, posicion+1)));
         return posicion + 1;
     }
 
@@ -205,7 +205,7 @@ public class Scanner{
         if (position < source.length() && Character.isLetter(source.charAt(position))) {
             throw new UnsupportedOperationException("Identificador no valido: " + source.substring(start, position + 1));
         }
-        tokens.add(new Token(TokenType.NUMBER, source.substring(start, position)));
+        tokens.add(new Token(TokenType.ASIGNACION, source.substring(start, position)));
         return position;
     }
 }

@@ -8,181 +8,282 @@ public class Parser {
         this.tokens = Arrays.asList(tokens);
         this.index = 0;
     }
-
-    public void parse() {
+    
+    public boolean parse() {
         if (iniBlock()) {
             System.out.println("Programa correcto");
+            return true;
         } else {
             System.out.println("Programa incorrecto");
+            return false;
         }
     }
 
     private boolean iniBlock() {
-        if (match(TokenType.PR) && match(TokenType.LLAVEIZQ)) {
-            if (statements()) {
-                return true;
+        if (tokens.get(index).getValor().equals("ini") && match(TokenType.PR) && match(TokenType.LLAVEIZQ)) {
+            if (!statements()) {
+                return false;
             }
-            if (match(TokenType.LLAVEDER)) {
-                return true;
-            }
-            return false;
-        }else{
-            System.out.println("Error: Expected PR LLAVEIZQ but found " + tokens.get(index).getValor() + " at token "+index);
+            return match(TokenType.LLAVEDER);
+        } else {
             return false;
         }
-       
     }
 
     private boolean statements() {
         boolean flag = true;
-        while (index < tokens.size() && flag) {
-            System.out.println("Statements " + tokens.get(index).getValor() + " at token "+index);
-           flag = statement();
-        }
-        if (!flag) {
-            System.out.println("Error: Expected statement but found " + tokens.get(index).getValor() + " at token "+index+ " fin de statements");
+        while (index < (tokens.size()-1)) {
+            flag = statement();
+            if (!flag) {
+                break;
+            }
         }
         return flag;
     }
 
     private boolean statement() {
-        System.out.println("Statement " + tokens.get(index).getValor() + " at token "+index);
-        if (match(TokenType.PR) && tokens.get(index).getValor().equals("int")) {
-            System.out.println("Variable declaration int "+tokens.get(index).getValor());
-            variable_declarationInt();
-            return true;
-        } else if (match(TokenType.PR) && tokens.get(index).getValor().equals("string")) {
-            System.out.println("Variable declaration String"+tokens.get(index).getValor());
-            variable_declarationString();
-            return true;
-        }else if(match(TokenType.IDENTIFICADOR)){
-            assignment();
-            return true;
-        }else if(match(TokenType.PR) && tokens.get(index).getValor().equals("if")){
-            if_statement();
-            return true;
-        }else if(match(TokenType.PR) && tokens.get(index).getValor().equals("for")){
-            for_statement();
-            return true;
-        }else if(match(TokenType.PR) && tokens.get(index).getValor().equals("while")){
-            while_statement();
-            return true;
-        }else if(match(TokenType.PR) && tokens.get(index).getValor().equals("print")){
-            printing();
+        int tempIndex = index;
+        if (variable_declarationInt()) {
+            System.out.println("variable_declarationInt");
             return true;
         }else{
-            System.out.println("Error: Expected PR but found " + tokens.get(index).getValor() + " at token "+index + " fin de statement");
+            index = tempIndex;
+        }
+        if (variable_declarationString()) {
+            System.out.println("variable_declarationString");
+            return true;
+        }else{
+            index = tempIndex;
+        }
+        if (assignment()) {
+            System.out.println("assignment");
+            return true;
+        }else{
+            index = tempIndex;
+        }
+        if (if_statement()) {
+            System.out.println("if_statement");
+            return true;
+        }else{
+            index = tempIndex;
+        }
+        if (for_statement()) {
+            System.out.println("for_statement");
+            return true;
+        }else{
+            index = tempIndex;
+        }
+        if (while_statement()) {
+            System.out.println("while_statement");
+            return true;
+        }else{
+            index = tempIndex;
+        }
+        return match(TokenType.LLAVEDER);
+    }
+
+    private boolean variable_declarationInt() {
+        if (!type()) {
             return false;
         }
-        
-    }
+        if (!identifier()) {
+            return false;
+        }
 
-    private void variable_declarationInt() {
-        System.out.println("Variable declaration"+tokens.get(index).getValor() + " at token "+index);
-        type();
-        identifier();
         if (match(TokenType.OP)) {
-            expression();
+            return expression();
         }
-        match(TokenType.PUNTOYCOMA);
+        return match(TokenType.PUNTOYCOMA);
     }
 
-    private void variable_declarationString() {
-        System.out.println("Variable declaration String"+tokens.get(index).getValor() + " at token "+index);
-        type();
+    private boolean variable_declarationString() {
+        if (!type()) {
+            return false;
+            
+        }
+        if (!identifier()) {
+            return false;
+        }
+        if (match(TokenType.OP) && (!string())) {
+                return match(TokenType.PUNTOYCOMA);
+            
+        }
+        return true;
+    }
+
+    private boolean assignment(){
+        if (!identifier()) {
+            return false;
+        }
+        if (!match(TokenType.ASIGNACION)) {
+            return false;
+        }
+        if (!expression()) {
+            return false;
+        }
+        return match(TokenType.PUNTOYCOMA);
+
+    }
+
+    private boolean if_statement() {
+        if (!match(TokenType.PR)) {
+            return false;
+        }
+        if (!match(TokenType.PARI)) {
+            return false;
+        }
+        if (!condition()) {
+            return false;
+        }
+        if (!match(TokenType.PARD)) {
+            return false;
+        }
+        if (!match(TokenType.LLAVEIZQ)) {
+            return false;
+        }
+        if (!statements()) {
+            return false;
+        }
+        if (!match(TokenType.LLAVEDER)) {
+            return false;
+        }
+        if (match(TokenType.PR) && (tokens.get(index).getValor().equals("else"))) {
+                if (!match(TokenType.LLAVEIZQ)) {
+                    return false;
+                }
+                if (!statements()) {
+                    return false;
+                }
+                if (!match(TokenType.LLAVEDER)) {
+                    return false;
+                }
+        }
+        return true;
+    }
+
+    private boolean for_statement() {
+        if (!match(TokenType.PR)) {
+            return false;
+        }
+        if (!match(TokenType.PARI)) {
+            return false;
+        }
+        if (!variable_declarationInt()) {
+            return false;
+        }
+        if (!match(TokenType.PUNTOYCOMA)) {
+            return false;
+        }
+        if (!condition()) {
+            return false;
+        }
+        if (!match(TokenType.PUNTOYCOMA)) {
+            return false;
+        }
+        if (!assignment()) {
+            return false;
+        }
+        if (!match(TokenType.PARD)) {
+            return false;
+        }
+        if (!match(TokenType.LLAVEIZQ)) {
+            return false;
+        }
+        if (!statements()) {
+            return false;
+        }
+        return match(TokenType.LLAVEDER);
+    }
+
+    private boolean while_statement() {
+        if (!match(TokenType.PR)) {
+            return false;
+        }
+        if (!match(TokenType.PARI)) {
+            return false;
+        }
+        if (!condition()) {
+            return false;
+        }
+        if (!match(TokenType.PARD)) {
+            return false;
+        }
+        if (!match(TokenType.LLAVEIZQ)) {
+            return false;
+        }
+        if (!statements()) {
+            return false;
+        }
+        return match(TokenType.LLAVEDER);
+    }
+
+    private boolean printing() {
+        match(TokenType.PARI);
         identifier();
+        match(TokenType.PARD);
+        match(TokenType.PUNTOYCOMA);
+        return true;
+    }
+
+    private boolean type() {
+        return match(TokenType.PR);
+    }
+
+    private boolean identifier() {
+        return match(TokenType.IDENTIFICADOR);
+    }
+
+    private boolean expression() {
+        if (!factor()) {
+            return false;
+        }
+        int tempIndex = index;
         if (match(TokenType.OP)) {
-            string();
+            if (!expression()) {
+                index = tempIndex;
+                return false;
+            }
+            return true;
         }
-        match(TokenType.PUNTOYCOMA);
+        return true;
+
     }
 
-    private void assignment() {
-        identifier();
-        match(TokenType.OP);
-        expression();
-        match(TokenType.PUNTOYCOMA);
+    private boolean string() {
+        return match(TokenType.STRING);
     }
 
-    private void if_statement() {
-        match(TokenType.PARI);
-        condition();
-        match(TokenType.PARD);
-        match(TokenType.LLAVEIZQ);
-        statements();
-        match(TokenType.LLAVEDER);
-        if (match(TokenType.PR)) {
-            match(TokenType.LLAVEIZQ);
-            statements();
-            match(TokenType.LLAVEDER);
+    private boolean condition() {
+        if (!expression()) {
+            return false;
         }
-    }
-
-    private void for_statement() {
-        match(TokenType.PARI);
-        variable_declarationInt();
-        match(TokenType.PUNTOYCOMA);
-        condition();
-        match(TokenType.PUNTOYCOMA);
-        assignment();
-        match(TokenType.PARD);
-        match(TokenType.LLAVEIZQ);
-        statements();
-        match(TokenType.LLAVEDER);
-    }
-
-    private void while_statement() {
-        match(TokenType.PARI);
-        condition();
-        match(TokenType.PARD);
-        match(TokenType.LLAVEIZQ);
-        statements();
-        match(TokenType.LLAVEDER);
-    }
-
-    private void printing() {
-        match(TokenType.PARI);
-        identifier();
-        match(TokenType.PARD);
-        match(TokenType.PUNTOYCOMA);
-    }
-
-    private void type() {
-        match(TokenType.PR);
-    }
-
-    private void identifier() {
-        match(TokenType.IDENTIFICADOR);
-    }
-
-    private void expression() {
-        factor();
-        if (match(TokenType.OP)) {
-            expression();
+        if (!comparison_operator()) {
+            return false;
         }
+        return expression();
     }
 
-    private void string() {
-        match(TokenType.STRING);
-    }
-
-    private void condition() {
-        expression();
-        comparison_operator();
-        expression();
-    }
-
-    private void factor() {
+    private boolean factor() {
+        if (match(TokenType.ASIGNACION)) {
+            return true;
+        }
+        if (match(TokenType.IDENTIFICADOR)) {
+            return true;
+        }
+        if (match(TokenType.NUMBER)) {
+            return true;
+        }
         if (match(TokenType.PARI)) {
-            expression();
-            match(TokenType.PARD);
-        } else {
-            identifier();
+            if (!expression()) {
+                return false;
+            }
+            return match(TokenType.PARD);
         }
+        return false;
     }
 
-    private void comparison_operator() {
-        match(TokenType.CO);
+    private boolean comparison_operator() {
+        return match(TokenType.CO);
         // Add other comparison operators here
     }
 
@@ -190,7 +291,7 @@ public class Parser {
         System.out.println("Matching " + expectedToken +" valor token:"+ tokens.get(index).getValor() + " tipo token:" + tokens.get(index).getTipo() + " at token "+index);
         if (index < tokens.size() && tokens.get(index).getTipo() == expectedToken) {
             index++;
-            System.out.println("Matched " + expectedToken + " at line "+tokens.get(index));
+            //System.out.println("Matched " + expectedToken + " at line "+tokens.get(index));
             return true;
         }
         System.out.println("Error: Expected " + expectedToken + " but found " + tokens.get(index).getValor());

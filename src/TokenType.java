@@ -10,5 +10,6 @@ public enum TokenType {
     PUNTOYCOMA,
     OP,
     IDENTIFICADOR, 
-    PR
+    PR,
+    ASIGNACION
 }
