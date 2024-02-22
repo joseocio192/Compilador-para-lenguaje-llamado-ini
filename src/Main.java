@@ -161,8 +161,12 @@ public class Main {
                 Token[] tokens = scanner.scanear(texto);
                 Parser parser = new Parser(tokens);
                 try {
-                    parser.parse();
+                    boolean x = parser.parse();
+                    if (x){
                     JOptionPane.showMessageDialog(null, "El programa es correcto", "Correcto", JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "El programa es incorrecto", "Incorrecto", JOptionPane.ERROR_MESSAGE);
+                    }
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(null, "Algo a salido mal: "+ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }

@@ -144,7 +144,7 @@ public class Scanner{
                 }
                 if (source.charAt(posicion + 1) == '='){
                     tokens.add(new Token(TokenType.CO, "=="));
-                    return posicion + 1;
+                    return posicion + 2;
                 } else {
                     type = TokenType.OP;
                 }

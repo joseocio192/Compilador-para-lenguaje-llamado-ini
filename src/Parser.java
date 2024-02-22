@@ -24,7 +24,7 @@ public class Parser {
             if (!statements()) {
                 return false;
             }
-            return match(TokenType.LLAVEDER);
+            return tokens.get(index).getTipo().equals(TokenType.LLAVEDER);
         } else {
             return false;
         }
@@ -33,7 +33,9 @@ public class Parser {
     private boolean statements() {
         boolean flag = true;
         while (index < (tokens.size()-1)) {
+            System.out.println("Statement at token "+index+" of "+tokens.size());
             flag = statement();
+            System.out.println(flag + " at token "+index+" of "+tokens.size());
             if (!flag) {
                 break;
             }
@@ -42,6 +44,12 @@ public class Parser {
     }
 
     private boolean statement() {
+        if (match(TokenType.LLAVEDER)) {
+            index--;
+            System.out.println("LLAVEDER");
+            return true;
+        }
+
         int tempIndex = index;
         if (variable_declarationInt()) {
             System.out.println("variable_declarationInt");
@@ -61,6 +69,7 @@ public class Parser {
         }else{
             index = tempIndex;
         }
+        System.out.println("if statemant condition");
         if (if_statement()) {
             System.out.println("if_statement");
             return true;
@@ -79,7 +88,13 @@ public class Parser {
         }else{
             index = tempIndex;
         }
-        return match(TokenType.LLAVEDER);
+
+        if (match(TokenType.LLAVEDER)) {
+            index--;
+            return true;
+        }else{
+            return false;
+        }
     }
 
     private boolean variable_declarationInt() {
@@ -140,6 +155,9 @@ public class Parser {
         }
         if (!match(TokenType.LLAVEIZQ)) {
             return false;
+        }
+        if (match(TokenType.LLAVEDER)) {
+            return true;
         }
         if (!statements()) {
             return false;
@@ -237,6 +255,9 @@ public class Parser {
         if (!factor()) {
             return false;
         }
+        if (match(TokenType.PUNTOYCOMA)) {
+            return true;
+        }
         int tempIndex = index;
         if (match(TokenType.OP)) {
             if (!expression()) {
@@ -288,11 +309,15 @@ public class Parser {
     }
 
     private boolean match(TokenType expectedToken) {
-        System.out.println("Matching " + expectedToken +" valor token:"+ tokens.get(index).getValor() + " tipo token:" + tokens.get(index).getTipo() + " at token "+index);
-        if (index < tokens.size() && tokens.get(index).getTipo() == expectedToken) {
-            index++;
-            //System.out.println("Matched " + expectedToken + " at line "+tokens.get(index));
-            return true;
+        
+        if (index < tokens.size() ) {
+            System.out.println("Matching " + expectedToken +" valor token:"+ tokens.get(index).getValor() + " tipo token:" + tokens.get(index).getTipo() + " at token "+index);
+            if (tokens.get(index).getTipo() == expectedToken) {
+                System.out.println("Matched " + expectedToken + " at line "+tokens.get(index));
+                index++;
+                return true;
+            }
+           return false;
         }
         System.out.println("Error: Expected " + expectedToken + " but found " + tokens.get(index).getValor());
         //throw new RuntimeException("Syntax error" + "Error: Expected " + expectedToken + " but found " + tokens.get(index).getValor()+" at token "+index);
