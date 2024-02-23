@@ -24,7 +24,7 @@ public class Parser {
             if (!statements()) {
                 return false;
             }
-            return tokens.get(index).getTipo().equals(TokenType.LLAVEDER);
+            return (tokens.get(index).getTipo().equals(TokenType.LLAVEDER)&&index==tokens.size()-1);
         } else {
             return false;
         }
@@ -34,22 +34,21 @@ public class Parser {
         boolean flag = true;
         while (index < (tokens.size()-1)) {
             System.out.println("Statement at token "+index+" of "+tokens.size());
+            if (tokens.get(index).getTipo() == TokenType.LLAVEDER) {
+                break;
+            }
             flag = statement();
             System.out.println(flag + " at token "+index+" of "+tokens.size());
             if (!flag) {
                 break;
             }
         }
+        
         return flag;
     }
 
     private boolean statement() {
-        if (match(TokenType.LLAVEDER)) {
-            index--;
-            System.out.println("LLAVEDER");
-            return true;
-        }
-
+      
         int tempIndex = index;
         if (variable_declarationInt()) {
             System.out.println("variable_declarationInt");
@@ -69,21 +68,27 @@ public class Parser {
         }else{
             index = tempIndex;
         }
-        System.out.println("if statemant condition");
         if (if_statement()) {
-            System.out.println("if_statement");
+            System.out.println("if_statement true");
             return true;
         }else{
             index = tempIndex;
         }
+        System.out.println("for_statement");
         if (for_statement()) {
-            System.out.println("for_statement");
+            System.out.println("for_statement true");
             return true;
         }else{
             index = tempIndex;
         }
         if (while_statement()) {
-            System.out.println("while_statement");
+            System.out.println("while_statement true");
+            return true;
+        }else{
+            index = tempIndex;
+        }
+        if (printing()) {
+            System.out.println("printing");
             return true;
         }else{
             index = tempIndex;
@@ -91,10 +96,10 @@ public class Parser {
 
         if (match(TokenType.LLAVEDER)) {
             index--;
+            System.out.println("LLAVEDER");
             return true;
-        }else{
-            return false;
         }
+        return false;
     }
 
     private boolean variable_declarationInt() {
@@ -105,8 +110,15 @@ public class Parser {
             return false;
         }
 
-        if (match(TokenType.OP)) {
-            return expression();
+        if (match(TokenType.PUNTOYCOMA)) {
+            return true;
+        }
+
+        if (!match(TokenType.OP)) {
+            return false;
+        }
+        if (!expression()) {
+            return false;
         }
         return match(TokenType.PUNTOYCOMA);
     }
@@ -130,7 +142,7 @@ public class Parser {
         if (!identifier()) {
             return false;
         }
-        if (!match(TokenType.ASIGNACION)) {
+        if (!match(TokenType.OP)) {
             return false;
         }
         if (!expression()) {
@@ -165,7 +177,8 @@ public class Parser {
         if (!match(TokenType.LLAVEDER)) {
             return false;
         }
-        if (match(TokenType.PR) && (tokens.get(index).getValor().equals("else"))) {
+        if (tokens.get(index).getValor().equals("else")) {
+                index++;
                 if (!match(TokenType.LLAVEIZQ)) {
                     return false;
                 }
@@ -189,9 +202,6 @@ public class Parser {
         if (!variable_declarationInt()) {
             return false;
         }
-        if (!match(TokenType.PUNTOYCOMA)) {
-            return false;
-        }
         if (!condition()) {
             return false;
         }
@@ -207,6 +217,9 @@ public class Parser {
         if (!match(TokenType.LLAVEIZQ)) {
             return false;
         }
+        if (match(TokenType.LLAVEDER)) {
+            return true;
+        }
         if (!statements()) {
             return false;
         }
@@ -214,7 +227,7 @@ public class Parser {
     }
 
     private boolean while_statement() {
-        if (!match(TokenType.PR)) {
+        if (!match(TokenType.PR) && tokens.get(index-1).getValor().equals("while")) {
             return false;
         }
         if (!match(TokenType.PARI)) {
@@ -229,6 +242,9 @@ public class Parser {
         if (!match(TokenType.LLAVEIZQ)) {
             return false;
         }
+        if (match(TokenType.LLAVEDER)) {
+            return true;
+        }
         if (!statements()) {
             return false;
         }
@@ -236,11 +252,19 @@ public class Parser {
     }
 
     private boolean printing() {
-        match(TokenType.PARI);
-        identifier();
-        match(TokenType.PARD);
-        match(TokenType.PUNTOYCOMA);
-        return true;
+        if (!match(TokenType.PR) && tokens.get(index-1).getValor().equals("mostrar")) {
+            return false;
+        }
+        if (!match(TokenType.PARI)) {
+            return false;
+        }
+        if (!identifier()) {
+            return false;
+        }
+        if (!match(TokenType.PARD)) {
+            return false;
+        }
+        return match(TokenType.PUNTOYCOMA);
     }
 
     private boolean type() {
@@ -255,12 +279,9 @@ public class Parser {
         if (!factor()) {
             return false;
         }
-        if (match(TokenType.PUNTOYCOMA)) {
-            return true;
-        }
         int tempIndex = index;
         if (match(TokenType.OP)) {
-            if (!expression()) {
+            if (!factor()) {
                 index = tempIndex;
                 return false;
             }
@@ -275,20 +296,20 @@ public class Parser {
     }
 
     private boolean condition() {
-        if (!expression()) {
+        if (!factor()) {
             return false;
         }
         if (!comparison_operator()) {
             return false;
         }
-        return expression();
+        return factor();
     }
 
     private boolean factor() {
-        if (match(TokenType.ASIGNACION)) {
+        if (match(TokenType.IDENTIFICADOR)) {
             return true;
         }
-        if (match(TokenType.IDENTIFICADOR)) {
+        if (match(TokenType.ASIGNACION)) {
             return true;
         }
         if (match(TokenType.NUMBER)) {
@@ -317,9 +338,10 @@ public class Parser {
                 index++;
                 return true;
             }
-           return false;
+            System.out.println("Error: Expected " + expectedToken + " but found " + tokens.get(index).getValor()+":"+tokens.get(index).getTipo());
+            return false;
         }
-        System.out.println("Error: Expected " + expectedToken + " but found " + tokens.get(index).getValor());
+        
         //throw new RuntimeException("Syntax error" + "Error: Expected " + expectedToken + " but found " + tokens.get(index).getValor()+" at token "+index);
         return false;
     }

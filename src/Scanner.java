@@ -29,6 +29,10 @@ public class Scanner{
             return tokenizeMostrar(posicion, tokens);
         } else if (isIntKeyword(c, source, posicion)) {
             return tokenizeInt(posicion, tokens);
+        } else if (isWhileKeyword(c,source, posicion)) {
+            return tokenizeWhile(posicion, tokens);
+        } else if (isForKeyword(c,source, posicion)) {
+            return tokenizeFor(posicion, tokens);
         } else if (isStringKeyword(c,source, posicion)) {
             return tokenizeString(posicion, tokens);
         }else if (c == '"') {
@@ -40,6 +44,24 @@ public class Scanner{
         } else {
             return tokenizeSymbol(c, source, posicion, tokens);
         }
+    }
+
+    private int tokenizeFor(int posicion, ArrayList<Token> tokens) {
+        tokens.add(new Token(TokenType.PR, "for"));
+        return posicion + 3;
+    }
+
+    private boolean isForKeyword(char c, String source, int posicion) {
+        return source.substring(posicion, Math.min(posicion + 3, source.length())).equals("for");
+    }
+
+    private int tokenizeWhile(int posicion, ArrayList<Token> tokens) {
+        tokens.add(new Token(TokenType.PR, "while"));
+        return posicion + 5;
+    }
+
+    private boolean isWhileKeyword(char c, String source, int posicion) {
+        return source.substring(posicion, Math.min(posicion + 5, source.length())).equals("while");
     }
 
     private int tokenizeString(int posicion, ArrayList<Token> tokens) {
@@ -118,6 +140,8 @@ public class Scanner{
         tokens.add(new Token(TokenType.PR, "ini"));
         return posicion + 3;
     }
+
+   
 
     private int tokenizeSymbol(char c, String source, int posicion, ArrayList<Token> tokens) {
         TokenType type = null;
