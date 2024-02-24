@@ -55,6 +55,7 @@ public class Main {
         botonLexico.setBounds(350, 40, 100, 30);
 
         JButton botonParser = new JButton("Parser");
+        botonParser.setEnabled(false);
         paneStart.add(botonParser);
         botonParser.setBounds(650, 40, 100, 30);
 
@@ -96,35 +97,48 @@ public class Main {
                 });
                 //menu guardar
                 guardar.addActionListener(e -> {
-                    JFileChooser fileChooser = new JFileChooser();
-                    fileChooser.showSaveDialog(miVentana);
-                    File x = fileChooser.getSelectedFile();
-                    try {
-                        if (x.createNewFile()) {
-                            System.out.println("File created: " + x.getName());
-                        } else {
-                            System.out.println("File already exists.");
-                        } 
-                        // Create a FileWriter object
-                        FileWriter writer = new FileWriter(x);
-                        // Write the content of textAreaProgram to the file
-                        writer.write(textAreaProgram.getText());
-                        // Close the writer
-                        writer.close();
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
+                    if (textAreaProgram.getText().equals("")) {
+                        JOptionPane.showMessageDialog(null, "No hay nada que guardar", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }else{
+                        JFileChooser fileChooser = new JFileChooser();
+                        fileChooser.showSaveDialog(miVentana);
+                        File x = fileChooser.getSelectedFile();
+                        try {
+                            if (x.createNewFile()) {
+                                System.out.println("File created: " + x.getName());
+                            } else {
+                                System.out.println("File already exists.");
+                            } 
+                            // Create a FileWriter object
+                            FileWriter writer = new FileWriter(x);
+                            // Write the content of textAreaProgram to the file
+                            writer.write(textAreaProgram.getText());
+                            // Close the writer
+                            writer.close();
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
                     }
+                    
                 });
                 //menu salir
                 salir.addActionListener(e -> System.exit(0));
                 //menu nuevo
-                nuevo.addActionListener(e -> textAreaProgram.setText(""));
+                nuevo.addActionListener(e -> {
+                    textAreaProgram.setText("");
+                    botonParser.setEnabled(false);
+                    botonLexico.setEnabled(true);
+                    miVentana.repaint();
+                });
 
-        //boton compilar
+        //boton lexico
         botonLexico.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                
-                Scanner scanner = new Scanner();
+                if (textAreaProgram.getText().equals("")) {
+                    JOptionPane.showMessageDialog(null, "No hay nada que Analizar", "Error lexico", JOptionPane.ERROR_MESSAGE);
+                }else{
+                    Scanner scanner = new Scanner();
                 String texto = textAreaProgram.getText() + " ";
                 try {
                     Token[] tokens = scanner.scanear(texto);
@@ -141,15 +155,19 @@ public class Main {
                     botonLimpiar.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent e) {
                                     paneStart.remove(scrollTabla);
+                                    botonParser.setEnabled(false);
+                                    botonLexico.setEnabled(true);
                                     miVentana.repaint();
                         }
                     });
-                } catch (Exception ex) {
+                    botonLexico.setEnabled(false);
+                    botonParser.setEnabled(true);
+                } catch (Exception ex) { 
+
                     JOptionPane.showMessageDialog(null, "Algo a salido mal: "+ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 
                 }
-               
-
+                }
             }
         });
 

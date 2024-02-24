@@ -1,6 +1,7 @@
 
 public enum TokenType {
     NUMBER,
+    FLOAT,
     STRING,
     CO, //COMPARASION OPERATOR
     PARI,

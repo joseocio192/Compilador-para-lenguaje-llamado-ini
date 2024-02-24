@@ -14,12 +14,14 @@ while_statement -> "while" "(" condition ")" "{" statements "}"
 printing -> mostrar "(" identifier ")" ";"
 type -> "int"
       | "string"
+      | "float"
 identifier -> [char][char | number | _]*
 expression -> factor operator factor | factor
-string -> """ [char+ | " "| number]+ """
+string -> """ [char+ | " "| number | floatVar]+ """
 number -> [0-9]+
+floatVar -> [0-9]+ "." [0-9]+
 arguments -> expression arguments | expression
-factor -> identifier | number | "(" expression ")"
+factor -> identifier | number | floatVar| string |"(" expression ")"
 condition -> factor comparison_operator factor
 operator -> "+"
           | "-"

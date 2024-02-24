@@ -14,6 +14,12 @@ public class MainConsola {
             for (int i = 0; i < tokens.length; i++) {
                 System.out.println(tokens[i].getValor() + " " + tokens[i].getTipo().toString());
             }
+
+            Parser parser = new Parser(tokens);
+            parser.parse();
+            Semantico semantico = new Semantico(tokens);
+            semantico.isSemanticallyCorrect();
+
         } catch (Exception e) {
             e.printStackTrace();
         }

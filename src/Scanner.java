@@ -17,23 +17,25 @@ public class Scanner{
     }
 
     private int tokenizeCharacter(char c, String source, int posicion, ArrayList<Token> tokens) {
-        if (isIniKeyword(c, source, posicion)) {
+        if (isIniKeyword(source, posicion)) {
             return tokenizeIni(posicion, tokens);
-        } else if (isIfKeyword(c, source, posicion)) {
+        } else if (isIfKeyword(source, posicion)) {
             return tokenizeIf(posicion, tokens);
-        } else if (isTokenString(c, source, posicion)) {
+        } else if (isTokenString(source, posicion)) {
             return tokenizeStringType(posicion, tokens);
-        }else if (isElseKeyword(c, source, posicion)) {
+        }else if (isElseKeyword(source, posicion)) {
             return tokenizeElse(posicion, tokens);
-        } else if (isMostrarKeyword(c, source, posicion)) {
+        } else if (isMostrarKeyword(source, posicion)) {
             return tokenizeMostrar(posicion, tokens);
-        } else if (isIntKeyword(c, source, posicion)) {
+        } else if (isIntKeyword(source, posicion)) {
             return tokenizeInt(posicion, tokens);
-        } else if (isWhileKeyword(c,source, posicion)) {
+        }else if (isFloatKeyword(source, posicion)) {
+            return tokenizeFloat(posicion, tokens); 
+        } else if (isWhileKeyword(source, posicion)) {
             return tokenizeWhile(posicion, tokens);
-        } else if (isForKeyword(c,source, posicion)) {
+        } else if (isForKeyword(source, posicion)) {
             return tokenizeFor(posicion, tokens);
-        } else if (isStringKeyword(c,source, posicion)) {
+        } else if (isStringKeyword(source, posicion)) {
             return tokenizeString(posicion, tokens);
         }else if (c == '"') {
             return tokenizeStringValue(posicion,source, tokens);
@@ -46,12 +48,21 @@ public class Scanner{
         }
     }
 
+    private int tokenizeFloat(int posicion, ArrayList<Token> tokens) {
+        tokens.add(new Token(TokenType.PR, "float"));
+        return posicion + 5;
+    }
+
+    private boolean isFloatKeyword(String source, int posicion) {
+        return source.substring(posicion, Math.min(posicion + 5, source.length())).equals("float") && (Character.isWhitespace(source.charAt(posicion + 5)));
+    }
+
     private int tokenizeFor(int posicion, ArrayList<Token> tokens) {
         tokens.add(new Token(TokenType.PR, "for"));
         return posicion + 3;
     }
 
-    private boolean isForKeyword(char c, String source, int posicion) {
+    private boolean isForKeyword(String source, int posicion) {
         return source.substring(posicion, Math.min(posicion + 3, source.length())).equals("for");
     }
 
@@ -60,7 +71,7 @@ public class Scanner{
         return posicion + 5;
     }
 
-    private boolean isWhileKeyword(char c, String source, int posicion) {
+    private boolean isWhileKeyword(String source, int posicion) {
         return source.substring(posicion, Math.min(posicion + 5, source.length())).equals("while");
     }
 
@@ -69,7 +80,7 @@ public class Scanner{
         return posicion + 6;
     }
 
-    private boolean isStringKeyword(char c, String source, int posicion) {
+    private boolean isStringKeyword(String source, int posicion) {
         return source.substring(posicion, Math.min(posicion + 6, source.length())).equals("string") && (Character.isWhitespace(source.charAt(posicion + 6)) || source.charAt(posicion + 6) == '(');
     }
 
@@ -91,27 +102,27 @@ public class Scanner{
         return posicion + 6;
     }
 
-    private boolean isTokenString(char c, String source, int posicion) {
+    private boolean isTokenString(String source, int posicion) {
         return source.substring(posicion, Math.min(posicion + 6, source.length())).equals("string") && (Character.isWhitespace(source.charAt(posicion + 6)) || source.charAt(posicion + 6) == '(');
     }
 
-    private boolean isIniKeyword(char c, String source, int posicion) {
+    private boolean isIniKeyword(String source, int posicion) {
         return source.substring(posicion, Math.min(posicion + 3, source.length())).equals("ini") && (Character.isWhitespace(source.charAt(posicion + 3)) || source.charAt(posicion + 3) == '{');
     }
 
-    private boolean isIfKeyword(char c, String source, int posicion) {
+    private boolean isIfKeyword(String source, int posicion) {
         return source.substring(posicion, Math.min(posicion + 2, source.length())).equals("if") && (Character.isWhitespace(source.charAt(posicion + 2)) || source.charAt(posicion + 2) == '(');
     }
 
-    private boolean isElseKeyword(char c, String source, int posicion) {
+    private boolean isElseKeyword(String source, int posicion) {
         return source.substring(posicion, Math.min(posicion + 4, source.length())).equals("else") && (Character.isWhitespace(source.charAt(posicion + 4)) || source.charAt(posicion + 4) == '{');
     }
 
-    private boolean isMostrarKeyword(char c, String source, int posicion) {
+    private boolean isMostrarKeyword(String source, int posicion) {
         return source.substring(posicion, Math.min(posicion + 7, source.length())).equals("mostrar") && (Character.isWhitespace(source.charAt(posicion + 7)) || source.charAt(posicion + 7) == '(');
     }
 
-    private boolean isIntKeyword(char c, String source, int posicion) {
+    private boolean isIntKeyword(String source, int posicion) {
         return source.substring(posicion, Math.min(posicion + 3, source.length())).equals("int");
     }
 
@@ -222,14 +233,26 @@ public class Scanner{
 
     private int tokenizeNumber(String source, int position, ArrayList<Token> tokens) {
         int start = position;
-        while (position < source.length() && Character.isDigit(source.charAt(position))) {
-            position++;
+        boolean isFloat = false;
+        while (position < source.length()) {
+            if (Character.isDigit(source.charAt(position))) {
+                position++;
+            } else if (source.charAt(position) == '.' && !isFloat) {
+                isFloat = true;
+                position++;
+            } else {
+                break;
+            }
         }
         //identificar que el numero sea numero y no un identificador erroneo
         if (position < source.length() && Character.isLetter(source.charAt(position))) {
             throw new UnsupportedOperationException("Identificador no valido: " + source.substring(start, position + 1));
         }
-        tokens.add(new Token(TokenType.ASIGNACION, source.substring(start, position)));
+        if (isFloat) {
+            tokens.add(new Token(TokenType.FLOAT, source.substring(start, position)));
+        } else {
+            tokens.add(new Token(TokenType.ASIGNACION, source.substring(start, position)));
+        }
         return position;
     }
 }

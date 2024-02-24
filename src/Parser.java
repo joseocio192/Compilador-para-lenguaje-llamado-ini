@@ -15,7 +15,7 @@ public class Parser {
             return true;
         } else {
             System.out.println("Programa incorrecto");
-            return false;
+            throw new RuntimeException("Syntax error at token "+index);
         }
     }
 
@@ -33,7 +33,7 @@ public class Parser {
     private boolean statements() {
         boolean flag = true;
         while (index < (tokens.size()-1)) {
-            System.out.println("Statement at token "+index+" of "+tokens.size());
+            //System.out.println("Statement at token "+index+" of "+tokens.size());
             if (tokens.get(index).getTipo() == TokenType.LLAVEDER) {
                 break;
             }
@@ -315,6 +315,9 @@ public class Parser {
         if (match(TokenType.NUMBER)) {
             return true;
         }
+        if (match(TokenType.FLOAT)) {
+            return true;
+        }
         if (match(TokenType.PARI)) {
             if (!expression()) {
                 return false;
@@ -332,13 +335,13 @@ public class Parser {
     private boolean match(TokenType expectedToken) {
         
         if (index < tokens.size() ) {
-            System.out.println("Matching " + expectedToken +" valor token:"+ tokens.get(index).getValor() + " tipo token:" + tokens.get(index).getTipo() + " at token "+index);
+            //System.out.println("Matching " + expectedToken +" valor token:"+ tokens.get(index).getValor() + " tipo token:" + tokens.get(index).getTipo() + " at token "+index);
             if (tokens.get(index).getTipo() == expectedToken) {
                 System.out.println("Matched " + expectedToken + " at line "+tokens.get(index));
                 index++;
                 return true;
             }
-            System.out.println("Error: Expected " + expectedToken + " but found " + tokens.get(index).getValor()+":"+tokens.get(index).getTipo());
+            //System.out.println("Error: Expected " + expectedToken + " but found " + tokens.get(index).getValor()+":"+tokens.get(index).getTipo());
             return false;
         }
         
