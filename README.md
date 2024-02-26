@@ -5,6 +5,5 @@ Este es un repositorio para la clase de lenguajes y autómatas 2 donde el objeti
 The workspace contains two folders by default, where:
 
 - `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
 
 Meanwhile, the compiled output files will be generated in the `bin` folder by default.

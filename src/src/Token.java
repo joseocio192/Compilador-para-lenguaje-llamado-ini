@@ -1,3 +1,4 @@
+package src;
 public class Token {
     private final TokenType tipo;
     private final String valor;

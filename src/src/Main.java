@@ -1,3 +1,4 @@
+package src;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -20,6 +21,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.WindowConstants;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 
@@ -63,6 +66,11 @@ public class Main {
         paneStart.add(botonLimpiar);
         botonLimpiar.setBounds(500, 40, 100, 30);
 
+        JButton botonSemantico = new JButton("Semantico");
+        botonSemantico.setEnabled(false);
+        paneStart.add(botonSemantico);
+        botonSemantico.setBounds(800, 40, 100, 30);
+
         JLabel label = new JLabel("Programa");
         label.setBounds(40, 40, 100, 30);
         paneStart.add(label);
@@ -72,6 +80,31 @@ public class Main {
         JScrollPane scrollPane = new JScrollPane(textAreaProgram);
         scrollPane.setBounds(40, 80, 250, 400);
         paneStart.add(scrollPane);
+
+        textAreaProgram.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                resetButtons();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                resetButtons();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                resetButtons();
+            }
+
+            private void resetButtons() {
+                // Reset the states of the buttons
+                botonLexico.setEnabled(true);
+                botonParser.setEnabled(false);
+                botonSemantico.setEnabled(false);
+                botonLimpiar.setEnabled(false);
+            }
+        });
 
         //acciones
                 //menu abrir
@@ -154,12 +187,15 @@ public class Main {
                     scrollTabla.setBounds(350, 80, 300, 400);
                     botonLimpiar.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent e) {
+                                    botonLimpiar.setEnabled(false);
                                     paneStart.remove(scrollTabla);
                                     botonParser.setEnabled(false);
                                     botonLexico.setEnabled(true);
                                     miVentana.repaint();
+                                    
                         }
                     });
+                    botonLimpiar.setEnabled(true);
                     botonLexico.setEnabled(false);
                     botonParser.setEnabled(true);
                 } catch (Exception ex) { 
@@ -182,6 +218,8 @@ public class Main {
                     boolean x = parser.parse();
                     if (x){
                     JOptionPane.showMessageDialog(null, "El programa es correcto", "Correcto", JOptionPane.INFORMATION_MESSAGE);
+                    botonSemantico.setEnabled(true);
+                    botonParser.setEnabled(false);
                     } else {
                         JOptionPane.showMessageDialog(null, "El programa es incorrecto", "Incorrecto", JOptionPane.ERROR_MESSAGE);
                     }

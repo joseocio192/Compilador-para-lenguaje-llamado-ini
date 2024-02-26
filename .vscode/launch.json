@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "src.Main",
+            "projectName": "Compilador-para-lenguaje-llamado-ini_8396a096"
+        },
+        {
+            "type": "java",
             "name": "MainConsola",
             "request": "launch",
             "mainClass": "MainConsola",
