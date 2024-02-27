@@ -229,6 +229,27 @@ public class Main {
             }
         });
 
+        //boton semantico
+        botonSemantico.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String texto = textAreaProgram.getText() + " ";
+                Scanner scanner = new Scanner();
+                Token[] tokens = scanner.scanear(texto);
+                Semantico semantico = new Semantico(tokens);
+                try {
+                    boolean x = semantico.isSemanticallyCorrect();
+                    if (x){
+                    JOptionPane.showMessageDialog(null, "El programa es correcto", "Correcto", JOptionPane.INFORMATION_MESSAGE);
+                    botonSemantico.setEnabled(false);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "El programa es incorrecto", "Incorrecto", JOptionPane.ERROR_MESSAGE);
+                    }
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(null, "Algo a salido mal: "+ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
         miVentana.setVisible(true);
     }
 
