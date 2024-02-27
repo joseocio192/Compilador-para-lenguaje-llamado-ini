@@ -51,6 +51,8 @@ public class Semantico {
             }
             index++;
         }
+        symbolTable.forEach((key, value) -> System.out.println(key + " : " + value));
+        System.out.println("Analisis semantico completado con exito");
         return true;
     }
 
@@ -73,7 +75,11 @@ public class Semantico {
                     throw new RuntimeException("Error semantico: variable no declarada");
                 }
                 }
+            }else if (tokens.get(index).getTipo().equals(TokenType.PUNTOYCOMA)) {
+                symbolTable.put(i, TokenType.IDENTIFICADOR);
+                
             }
+           
         }
     }
 }
