@@ -21,8 +21,8 @@ public class Semantico {
             Token token = tokens.get(index);
             // Check the token type and perform the appropriate semantic check
             switch (token.getTipo()) {
-                case IDENTIFICADOR:
-                
+                case PR:
+                metotodoPR();
                     break;
                 case ASIGNACION:
                     break;
@@ -42,8 +42,6 @@ public class Semantico {
                     break;
                 case PARI:
                     break;
-                case PR:
-                    break;
                 case PUNTOYCOMA:
                     break;
                 case STRING:
@@ -54,5 +52,28 @@ public class Semantico {
             index++;
         }
         return true;
+    }
+
+    private void metotodoPR() {
+        if (tokens.get(index).getValor().equals("int")) {
+            index++;
+            String i =tokens.get(index).getValor();
+            index++;
+            if(tokens.get(index).getTipo().equals(TokenType.ASIGNACION)){
+                index++;
+                if(tokens.get(index).getTipo().equals(TokenType.NUMBER)){
+                    symbolTable.put(i, TokenType.IDENTIFICADOR);
+                }
+                else if(tokens.get(index).getTipo().equals(TokenType.IDENTIFICADOR)){
+                if (symbolTable.containsKey(tokens.get(index).getValor())) {
+                    symbolTable.put(i, symbolTable.get(tokens.get(index).getValor()));
+                }
+                else{
+                    System.out.println("Error semantico: variable no declarada");
+                    throw new RuntimeException("Error semantico: variable no declarada");
+                }
+                }
+            }
+        }
     }
 }
