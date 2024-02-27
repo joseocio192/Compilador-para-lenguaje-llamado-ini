@@ -1,0 +1,37 @@
+//gramatica
+
+program -> ini_block
+ini_block -> "ini" "{" statements "}"
+statements -> statement statements | statement
+statement -> variable_declarationInt | variable_declarationString | assignment | if_statement | for_statement | while_statement | printing
+variable_declarationInt -> type identifier "=" expression ";" | type identifier ";"
+variable_declarationString -> type identifier "=" string ";" | type identifier ";"
+assignment -> identifier "=" expression ";"
+if_statement -> "if" "(" condition ")" "{" statements "}"
+              | "if" "(" condition ")" "{" statements "}" "else" "{" statements "}"
+for_statement -> "for" "(" variable_declaration ";" condition ";" assignment ")" "{" statements "}"
+while_statement -> "while" "(" condition ")" "{" statements "}"
+printing -> mostrar "(" identifier ")" ";"
+type -> "int"
+      | "string"
+      | "float"
+identifier -> [char][char | number | _]*
+expression -> factor operator factor | factor
+string -> """ [char+ | " "| number | floatVar]+ """
+number -> [0-9]+
+floatVar -> [0-9]+ "." [0-9]+
+arguments -> expression arguments | expression
+factor -> identifier | number | floatVar| string |"(" expression ")"
+condition -> factor comparison_operator factor
+operator -> "+"
+          | "-"
+          | "*"
+          | "/"
+          | "^"
+            "="
+comparison_operator -> ">"
+                     | "<"
+                     | "=>"
+                     | "<="
+                     | "=="
+                     | "!="
