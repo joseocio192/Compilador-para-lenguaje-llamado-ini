@@ -76,19 +76,24 @@ public class Semantico {
     System.out.println(tokens.get(index).getValor() + " : " +tokens.get(index).getTipo());
     index++;
     index++;
-    isVariableOrNumber();
-    
+    if (isVariableIntOrNumber()) {
+      index++;
+      if (!isVariableIntOrNumber()) {
+        throw new RuntimeException("Error semantico: variable No declarada o valor no es un numero");
+      }
+      
+    }
+
   }
 
-  private boolean isVariableOrNumber() {
-    if (symbolTable.containsKey(tokens.get(index).getValor())) {
+  private boolean isVariableIntOrNumber() {
+    if (symbolTable.containsKey(tokens.get(index).getValor()) ) {
       return true;
     } else if (isNumber(tokens.get(index).getValor())) {
       return true;
     } else {
       return false;
     }
-    
   }
 
   private boolean handlePrint() {
@@ -105,14 +110,23 @@ public class Semantico {
   }
 
   private void handleIntVariable() {
+    // Skip the "int" token
     index++;
     String i = tokens.get(index).getValor();
+    // Skip the variable name
     index++;
     if (tokens.get(index).getValor().equals("=")) {
+      // Skip the "=" token
       index++;
-      if (tokens.get(index).getTipo().equals(TokenType.ASIGNACION) && isNumber(tokens.get(index).getValor())) {
-        symbolTable.put(i, TokenType.NUMBER);
-        index++;
+      // Check if the next token is a number and if it is, add the variable to the symbol table
+      if (tokens.get(index).getTipo().equals(TokenType.ASIGNACION)) {
+        if (isNumber(tokens.get(index).getValor())) {
+          symbolTable.put(i, TokenType.NUMBER);
+          index++;
+        }else{
+          throw new RuntimeException("Error semantico: valor no es un numero");
+        }
+        // If the next token is an identifier, check if it's a variable declaration
       } else if (tokens.get(index).getTipo().equals(TokenType.IDENTIFICADOR)) {
         handleVariableAssignment(i);
       }
@@ -130,9 +144,14 @@ public class Semantico {
     index++;
     if (tokens.get(index).getValor().equals("=")) {
       index++;
-      if (tokens.get(index).getTipo().equals(TokenType.ASIGNACION) && isString(tokens.get(index).getValor())) {
-        symbolTable.put(i, TokenType.STRING);
-        index++;
+      if (tokens.get(index).getTipo().equals(TokenType.ASIGNACION)) {
+        if (isString(tokens.get(index).getValor())) {
+          symbolTable.put(i, TokenType.STRING);
+          index++;
+        }else{
+          throw new RuntimeException("Error semantico: valor no es un numero flotante");
+        }
+        
       } else if (tokens.get(index).getTipo().equals(TokenType.IDENTIFICADOR)) {
         handleVariableAssignment(i);
       }
@@ -175,7 +194,7 @@ public class Semantico {
         return true;
       } else {
         System.out.println("Error semantico: valor no es un numero");
-        throw new RuntimeException("Error semantico: valor no es un numero");
+        return false;
       }
     }
     return true;
@@ -199,7 +218,7 @@ public class Semantico {
         return true;
       } else {
         System.out.println("Error semantico: valor no es una cadena");
-        throw new RuntimeException("Error semantico: valor no es una cadena");
+        return false;
       }
     }
     return true;
