@@ -64,19 +64,18 @@ public class Semantico {
       index++;
       if (tokens.get(index).getValor().equals("=")) {
         index++;
-        if (tokens.get(index).getTipo().equals(TokenType.NUMBER)) {
-          symbolTable.put(i, TokenType.IDENTIFICADOR);
+        if (tokens.get(index).getTipo().equals(TokenType.ASIGNACION) && isNumber(tokens.get(index).getValor())) {
+          symbolTable.put(i, TokenType.NUMBER);
         } else if (tokens.get(index).getTipo().equals(TokenType.IDENTIFICADOR)) {
           if (symbolTable.containsKey(tokens.get(index).getValor())) {
-            symbolTable.put(i, symbolTable.get(tokens.get(index).getValor()));
+            symbolTable.put(i, TokenType.NUMBER);
           } else {
             System.out.println("Error semantico: variable no declarada");
             throw new RuntimeException("Error semantico: variable No declarada");
           }
         }
       } else if (tokens.get(index).getTipo().equals(TokenType.PUNTOYCOMA)) {
-        symbolTable.put(i, TokenType.IDENTIFICADOR);
-
+        symbolTable.put(i, TokenType.NUMBER);
       }
 
     } else if (tokens.get(index).getValor().equals("string")) {
@@ -86,17 +85,17 @@ public class Semantico {
       if (tokens.get(index).getValor().equals("=")) {
         index++;
         if (tokens.get(index).getTipo().equals(TokenType.ASIGNACION)) {
-          symbolTable.put(i, TokenType.IDENTIFICADOR);
+          symbolTable.put(i, TokenType.STRING);
         } else if (tokens.get(index).getTipo().equals(TokenType.IDENTIFICADOR)) {
           if (symbolTable.containsKey(tokens.get(index).getValor())) {
-            symbolTable.put(i, symbolTable.get(tokens.get(index).getValor()));
+            symbolTable.put(i, TokenType.STRING);
           } else {
             System.out.println("Error semantico: variable no declarada");
             throw new RuntimeException("Error semantico: variable No declarada");
           }
         }
       } else if (tokens.get(index).getTipo().equals(TokenType.PUNTOYCOMA)) {
-        symbolTable.put(i, TokenType.IDENTIFICADOR);
+        symbolTable.put(i, TokenType.STRING);
       }
     } else if (tokens.get(index).getValor().equals("float")) {
       index++;
@@ -104,20 +103,32 @@ public class Semantico {
       index++;
       if (tokens.get(index).getValor().equals("=")) {
         index++;
-        if (tokens.get(index).getTipo().equals(TokenType.NUMBER)) {
-          symbolTable.put(i, TokenType.IDENTIFICADOR);
+        if (tokens.get(index).getTipo().equals(TokenType.ASIGNACION)) {
+          symbolTable.put(i, TokenType.FLOAT);
         } else if (tokens.get(index).getTipo().equals(TokenType.IDENTIFICADOR)) {
           if (symbolTable.containsKey(tokens.get(index).getValor())) {
-            symbolTable.put(i, symbolTable.get(tokens.get(index).getValor()));
+            symbolTable.put(i, TokenType.FLOAT);
           } else {
             System.out.println("Error semantico: variable no declarada");
             throw new RuntimeException("Error semantico: variable No declarada");
           }
         }
       } else if (tokens.get(index).getTipo().equals(TokenType.PUNTOYCOMA)) {
-        symbolTable.put(i, TokenType.IDENTIFICADOR);
+        symbolTable.put(i, TokenType.FLOAT);
       }
     }
+  }
 
+  private boolean isNumber(String x) {
+    if (tokens.get(index).getTipo().equals(TokenType.ASIGNACION)) {
+      if (x.matches("[0-9]+")) {
+        return true;
+      } else {
+        System.out.println("Error semantico: valor no es un numero");
+        throw new RuntimeException("Error semantico: valor no es un numero");
+      }
+
+    }
+    return true;
   }
 }
