@@ -71,9 +71,8 @@ public class Semantico {
     }
   }
 
-
   private void handleIf() {
-    System.out.println(tokens.get(index).getValor() + " : " +tokens.get(index).getTipo());
+    System.out.println(tokens.get(index).getValor() + " : " + tokens.get(index).getTipo());
     index++;
     index++;
     if (isVariableIntOrNumber()) {
@@ -81,13 +80,13 @@ public class Semantico {
       if (!isVariableIntOrNumber()) {
         throw new RuntimeException("Error semantico: variable No declarada o valor no es un numero");
       }
-      
+
     }
 
   }
 
   private boolean isVariableIntOrNumber() {
-    if (symbolTable.containsKey(tokens.get(index).getValor()) ) {
+    if (symbolTable.containsKey(tokens.get(index).getValor())) {
       return true;
     } else if (isNumber(tokens.get(index).getValor())) {
       return true;
@@ -97,14 +96,14 @@ public class Semantico {
   }
 
   private boolean handlePrint() {
-    System.out.println(tokens.get(index).getValor() + " : " +tokens.get(index).getTipo());
+    System.out.println(tokens.get(index).getValor() + " : " + tokens.get(index).getTipo());
     index++;
     index++;
     if (symbolTable.containsKey(tokens.get(index).getValor())) {
       return true;
     } else {
       System.out.println("Error semantico: variable no declarada");
-      System.out.println(tokens.get(index).getValor() + " : " +tokens.get(index).getTipo());
+      System.out.println(tokens.get(index).getValor() + " : " + tokens.get(index).getTipo());
       throw new RuntimeException("Error semantico: variable No declarada");
     }
   }
@@ -118,12 +117,13 @@ public class Semantico {
     if (tokens.get(index).getValor().equals("=")) {
       // Skip the "=" token
       index++;
-      // Check if the next token is a number and if it is, add the variable to the symbol table
+      // Check if the next token is a number and if it is, add the variable to the
+      // symbol table
       if (tokens.get(index).getTipo().equals(TokenType.ASIGNACION)) {
         if (isNumber(tokens.get(index).getValor())) {
           symbolTable.put(i, TokenType.NUMBER);
           index++;
-        }else{
+        } else {
           throw new RuntimeException("Error semantico: valor no es un numero");
         }
         // If the next token is an identifier, check if it's a variable declaration
@@ -133,9 +133,10 @@ public class Semantico {
     } else if (tokens.get(index).getTipo().equals(TokenType.PUNTOYCOMA)) {
       symbolTable.put(i, TokenType.NUMBER);
       index++;
-    }else{
+    } else {
       System.out.println("Error semantico: variable no declarada");
-      throw new RuntimeException("Error semantico: variable No declarada");}
+      throw new RuntimeException("Error semantico: variable No declarada");
+    }
   }
 
   private void handleStringVariable() {
@@ -148,10 +149,10 @@ public class Semantico {
         if (isString(tokens.get(index).getValor())) {
           symbolTable.put(i, TokenType.STRING);
           index++;
-        }else{
-          throw new RuntimeException("Error semantico: valor no es un numero flotante");
+        } else {
+          throw new RuntimeException("Error semantico: valor no es un String");
         }
-        
+
       } else if (tokens.get(index).getTipo().equals(TokenType.IDENTIFICADOR)) {
         handleVariableAssignment(i);
       }
