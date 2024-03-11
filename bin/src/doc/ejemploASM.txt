@@ -1,0 +1,14 @@
+section .data
+    x db "hola", 0
+    b dd 3
+_start:
+    ; compare b with 10
+    mov eax, b
+    cmp eax, 10
+    jg else
+
+    ; if b <= 10, set b to 5
+    mov b, 5
+    jmp end
+
+else:
