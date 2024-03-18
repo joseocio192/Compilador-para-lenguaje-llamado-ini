@@ -1,7 +1,7 @@
-section .data
+.data
     x db "hola", 0
     b dd 3
-_start:
+.start
     ; compare b with 10
     mov eax, b
     cmp eax, 10
@@ -12,3 +12,4 @@ _start:
     jmp end
 
 else:
+end:
