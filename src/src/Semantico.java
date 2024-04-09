@@ -71,6 +71,11 @@ public class Semantico {
     }
   }
 
+  private boolean handleCondicion() {
+
+    return false;
+  }
+
   private void handleIf() {
     System.out.println(tokens.get(index).getValor() + " : " + tokens.get(index).getTipo());
     index++;
@@ -80,9 +85,7 @@ public class Semantico {
       if (!isVariableIntOrNumber()) {
         throw new RuntimeException("Error semantico: variable No declarada o valor no es un numero");
       }
-
     }
-
   }
 
   private boolean isVariableIntOrNumber() {

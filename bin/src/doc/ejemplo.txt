@@ -1,8 +1,0 @@
-ini{
-    string x = "hola";
-    int b = 3;
-    if(b <= 10){
-        b = 5;
-    }
-}
-
