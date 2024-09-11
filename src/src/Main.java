@@ -1,5 +1,6 @@
 package src;
 
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -21,6 +22,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -80,6 +82,8 @@ public class Main {
     JScrollPane scrollPane = new JScrollPane(textAreaProgram);
     scrollPane.setBounds(40, 80, 250, 400);
     paneStart.add(scrollPane);
+
+    textAreaProgram.setFont(new Font("Arial", Font.PLAIN, 18));
 
     textAreaProgram.getDocument().addDocumentListener(new DocumentListener() {
       @Override

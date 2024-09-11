@@ -68,12 +68,15 @@ public class Semantico {
       handlePrint();
     } else if (tokens.get(index).getValor().equals("if")) {
       handleIf();
+    } else if (tokens.get(index).getValor().equals("while")) {
+      handleWhile();
     }
   }
 
-  private boolean handleCondicion() {
+  private void handleWhile() {
+    System.out.println(tokens.get(index).getValor() + " : " + tokens.get(index).getTipo());
+    index++;
 
-    return false;
   }
 
   private void handleIf() {
@@ -189,6 +192,14 @@ public class Semantico {
     } else {
       System.out.println("Error semantico: variable no declarada");
       throw new RuntimeException("Error semantico: variable No declarada");
+    }
+  }
+
+  private void handleCondition() {
+    if (tokens.get(index).getTipo().equals(TokenType.IDENTIFICADOR)) {
+
+    } else {
+
     }
   }
 
