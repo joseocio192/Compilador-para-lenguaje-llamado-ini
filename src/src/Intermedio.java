@@ -98,7 +98,6 @@ public class Intermedio {
     }
     if (if_statement()) {
       System.out.println("if_statement true");
-      tempIndex2 = index;
       index = tempIndex;
       traducirifstatement();
       return true;
@@ -120,6 +119,10 @@ public class Intermedio {
     }
     if (printing()) {
       System.out.println("printing");
+      tempIndex2 = index;
+      index = tempIndex;
+      traducirPrinting();
+      index = tempIndex2;
       return true;
     } else {
       index = tempIndex;
@@ -131,6 +134,22 @@ public class Intermedio {
       return true;
     }
     return false;
+  }
+
+  private void traducirPrinting() {
+    index++;
+    index++;
+    String identificador = tokens.get(index).getValor();
+    codigoEnsamblador += "LEA DX," + identificador + "\n";
+    codigoEnsamblador += "MOV AH, 09H\n";
+    codigoEnsamblador += "INT 21H\n";
+    index++;
+    if (!match(TokenType.PARD)) {
+      return;
+    }
+    if (!match(TokenType.PUNTOYCOMA)) {
+      return;
+    }
   }
 
   private void traducirifstatement() {
@@ -152,31 +171,31 @@ public class Intermedio {
     int tempEtiqueta = etiqueta;
     switch (tokens.get(index).getValor()) {
       case "<=":
-      codigoEnsamblador += "CMP eax, " + tokens.get(index + 1).getValor() + "\n";
-      codigoEnsamblador += "JLE etiqueta" + etiqueta + "\n";
-      break;
+        codigoEnsamblador += "CMP eax, " + tokens.get(index + 1).getValor() + "\n";
+        codigoEnsamblador += "JLE etiqueta" + etiqueta + "\n";
+        break;
       case ">=":
-      codigoEnsamblador += "CMP eax, " + tokens.get(index + 1).getValor() + "\n";
-      codigoEnsamblador += "JGE etiqueta" + etiqueta + "\n";
-      break;
+        codigoEnsamblador += "CMP eax, " + tokens.get(index + 1).getValor() + "\n";
+        codigoEnsamblador += "JGE etiqueta" + etiqueta + "\n";
+        break;
       case "<":
-      codigoEnsamblador += "CMP eax, " + tokens.get(index + 1).getValor() + "\n";
-      codigoEnsamblador += "JL etiqueta" + etiqueta + "\n";
-      break;
+        codigoEnsamblador += "CMP eax, " + tokens.get(index + 1).getValor() + "\n";
+        codigoEnsamblador += "JL etiqueta" + etiqueta + "\n";
+        break;
       case ">":
-      codigoEnsamblador += "CMP eax, " + tokens.get(index + 1).getValor() + "\n";
-      codigoEnsamblador += "JG etiqueta" + etiqueta + "\n";
-      break;
+        codigoEnsamblador += "CMP eax, " + tokens.get(index + 1).getValor() + "\n";
+        codigoEnsamblador += "JG etiqueta" + etiqueta + "\n";
+        break;
       case "==":
-      codigoEnsamblador += "CMP eax, " + tokens.get(index + 1).getValor() + "\n";
-      codigoEnsamblador += "JE etiqueta" + etiqueta + "\n";
-      break;
+        codigoEnsamblador += "CMP eax, " + tokens.get(index + 1).getValor() + "\n";
+        codigoEnsamblador += "JE etiqueta" + etiqueta + "\n";
+        break;
       case "!=":
-      codigoEnsamblador += "CMP eax, " + tokens.get(index + 1).getValor() + "\n";
-      codigoEnsamblador += "JNE etiqueta" + etiqueta + "\n";
-      break;
+        codigoEnsamblador += "CMP eax, " + tokens.get(index + 1).getValor() + "\n";
+        codigoEnsamblador += "JNE etiqueta" + etiqueta + "\n";
+        break;
       default:
-      break;
+        break;
     }
     index++;
     index++;
@@ -261,7 +280,7 @@ public class Intermedio {
       } else if (tokens.get(index).getTipo() == TokenType.ASIGNACION) {
         codigoEnsamblador += "MOV eax, " + tokens.get(index).getValor() + "\n";
         codigoEnsamblador += "MOV " + identificador + ", eax\n";
-      }else  {
+      } else {
         codigoEnsamblador += "MOV eax, " + symbolTableValor.get(tokens.get(index).getValor()) + "\n";
         codigoEnsamblador += "MOV " + identificador + ", eax\n";
       }
