@@ -34,7 +34,7 @@ public class Main {
     JFrame miVentana = new JFrame("Compilador");
     miVentana.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     miVentana.setSize(1600, 1000);
-    miVentana.setIconImage(new javax.swing.ImageIcon(getClass().getResource("icon2.png")).getImage());
+    //miVentana.setIconImage(new javax.swing.ImageIcon(getClass().getResource("icon2.png")).getImage());
     // miVentana.setResizable(false);
     StringBuilder texto = new StringBuilder(); // Texto que se agregará al JTextArea
     // menu
@@ -73,6 +73,11 @@ public class Main {
     paneStart.add(botonSemantico);
     botonSemantico.setBounds(800, 40, 100, 30);
 
+    JButton botonIntermedio = new JButton("Intermedio");
+    botonIntermedio.setEnabled(false);
+    paneStart.add(botonIntermedio);
+    botonIntermedio.setBounds(950, 40, 100, 30);
+
     JLabel label = new JLabel("Programa");
     label.setBounds(40, 40, 100, 30);
     paneStart.add(label);
@@ -82,6 +87,11 @@ public class Main {
     JScrollPane scrollPane = new JScrollPane(textAreaProgram);
     scrollPane.setBounds(40, 80, 250, 400);
     paneStart.add(scrollPane);
+
+    JTextArea textAreaIntermedio = new JTextArea();
+    JScrollPane scrollPaneIntermedio = new JScrollPane(textAreaIntermedio);
+    scrollPaneIntermedio.setBounds(950, 80, 250, 400);
+    paneStart.add(scrollPaneIntermedio);
 
     textAreaProgram.setFont(new Font("Arial", Font.PLAIN, 18));
 
@@ -238,6 +248,7 @@ public class Main {
     // boton semantico
     botonSemantico.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
+        System.out.println("Boton semantico");
         String texto = textAreaProgram.getText() + " ";
         Scanner scanner = new Scanner();
         Token[] tokens = scanner.scanear(texto);
@@ -247,12 +258,62 @@ public class Main {
           if (x) {
             JOptionPane.showMessageDialog(null, "El programa es correcto", "Correcto", JOptionPane.INFORMATION_MESSAGE);
             botonSemantico.setEnabled(false);
+            botonIntermedio.setEnabled(true);
           } else {
             JOptionPane.showMessageDialog(null, "El programa es incorrecto", "Incorrecto", JOptionPane.ERROR_MESSAGE);
           }
         } catch (Exception ex) {
           JOptionPane.showMessageDialog(null, "Algo a salido mal: " + ex.getLocalizedMessage(), "Error",
               JOptionPane.ERROR_MESSAGE);
+        }
+      }
+    });
+
+    // boton intermedio
+    botonIntermedio.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        String texto = textAreaProgram.getText() + " ";
+        Scanner scanner = new Scanner();
+        Token[] tokens = scanner.scanear(texto);
+        Parser parser = new Parser(tokens);
+        try {
+          boolean x = parser.parse();
+          if (x) {
+            JOptionPane.showMessageDialog(null, "El programa es correcto", "Correcto", JOptionPane.INFORMATION_MESSAGE);
+            botonSemantico.setEnabled(true);
+            botonParser.setEnabled(false);
+          } else {
+            JOptionPane.showMessageDialog(null, "El programa es incorrecto", "Incorrecto", JOptionPane.ERROR_MESSAGE);
+          }
+        } catch (Exception ex) {
+          JOptionPane.showMessageDialog(null, "Algo a salido mal: " + ex.getLocalizedMessage(), "Error",
+              JOptionPane.ERROR_MESSAGE);
+        }
+        if (botonSemantico.isEnabled()) {
+          Semantico semantico = new Semantico(tokens);
+          try {
+            boolean x = semantico.isSemanticallyCorrect();
+            if (x) {
+              JOptionPane.showMessageDialog(null, "El programa es correcto", "Correcto", JOptionPane.INFORMATION_MESSAGE);
+              botonSemantico.setEnabled(false);
+            } else {
+              JOptionPane.showMessageDialog(null, "El programa es incorrecto", "Incorrecto", JOptionPane.ERROR_MESSAGE);
+            }
+          } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Algo a salido mal: " + ex.getLocalizedMessage(), "Error",
+                JOptionPane.ERROR_MESSAGE);
+          }
+        }
+        if (!botonSemantico.isEnabled()) {
+          Intermedio intermedio = new Intermedio(tokens);
+          try {
+           String x = intermedio.getIntermedioCode();
+            textAreaIntermedio.setText(x);
+            botonIntermedio.setEnabled(false);
+          } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Algo a salido mal: " + ex.getLocalizedMessage(), "Error",
+                JOptionPane.ERROR_MESSAGE);
+          }
         }
       }
     });

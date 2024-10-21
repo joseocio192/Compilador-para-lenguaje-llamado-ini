@@ -147,6 +147,9 @@ public class Parser {
     if (!match(TokenType.OP)) {
       return false;
     }
+    if (!tokens.get(index - 1).getValor().equals("=")) {
+      return false;
+    }
     if (!expression()) {
       return false;
     }
