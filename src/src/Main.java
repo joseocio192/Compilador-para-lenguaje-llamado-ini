@@ -33,7 +33,7 @@ public class Main {
     // la ventana
     JFrame miVentana = new JFrame("Compilador");
     miVentana.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-    miVentana.setSize(1600, 1000);
+    miVentana.setSize(1000, 600);
     //miVentana.setIconImage(new javax.swing.ImageIcon(getClass().getResource("icon2.png")).getImage());
     // miVentana.setResizable(false);
     StringBuilder texto = new StringBuilder(); // Texto que se agregará al JTextArea
@@ -57,26 +57,26 @@ public class Main {
 
     JButton botonLexico = new JButton("Lexico");
     paneStart.add(botonLexico);
-    botonLexico.setBounds(350, 40, 100, 30);
+    botonLexico.setBounds(100, 40, 100, 30);
 
     JButton botonParser = new JButton("Parser");
     botonParser.setEnabled(false);
     paneStart.add(botonParser);
-    botonParser.setBounds(650, 40, 100, 30);
+    botonParser.setBounds(350, 40, 100, 30);
 
     JButton botonLimpiar = new JButton("Limpiar");
     paneStart.add(botonLimpiar);
-    botonLimpiar.setBounds(500, 40, 100, 30);
+    botonLimpiar.setBounds(200, 40, 100, 30);
 
     JButton botonSemantico = new JButton("Semantico");
     botonSemantico.setEnabled(false);
     paneStart.add(botonSemantico);
-    botonSemantico.setBounds(800, 40, 100, 30);
+    botonSemantico.setBounds(550, 40, 100, 30);
 
     JButton botonIntermedio = new JButton("Intermedio");
     botonIntermedio.setEnabled(false);
     paneStart.add(botonIntermedio);
-    botonIntermedio.setBounds(950, 40, 100, 30);
+    botonIntermedio.setBounds(700, 40, 100, 30);
 
     JLabel label = new JLabel("Programa");
     label.setBounds(40, 40, 100, 30);
@@ -90,7 +90,7 @@ public class Main {
 
     JTextArea textAreaIntermedio = new JTextArea();
     JScrollPane scrollPaneIntermedio = new JScrollPane(textAreaIntermedio);
-    scrollPaneIntermedio.setBounds(950, 80, 250, 400);
+    scrollPaneIntermedio.setBounds(700, 80, 250, 400);
     paneStart.add(scrollPaneIntermedio);
 
     textAreaProgram.setFont(new Font("Arial", Font.PLAIN, 18));
@@ -203,6 +203,8 @@ public class Main {
               public void actionPerformed(ActionEvent e) {
                 botonLimpiar.setEnabled(false);
                 paneStart.remove(scrollTabla);
+                textAreaIntermedio.setText("");
+
                 botonParser.setEnabled(false);
                 botonLexico.setEnabled(true);
                 miVentana.repaint();
@@ -275,35 +277,6 @@ public class Main {
         String texto = textAreaProgram.getText() + " ";
         Scanner scanner = new Scanner();
         Token[] tokens = scanner.scanear(texto);
-        Parser parser = new Parser(tokens);
-        try {
-          boolean x = parser.parse();
-          if (x) {
-            JOptionPane.showMessageDialog(null, "El programa es correcto", "Correcto", JOptionPane.INFORMATION_MESSAGE);
-            botonSemantico.setEnabled(true);
-            botonParser.setEnabled(false);
-          } else {
-            JOptionPane.showMessageDialog(null, "El programa es incorrecto", "Incorrecto", JOptionPane.ERROR_MESSAGE);
-          }
-        } catch (Exception ex) {
-          JOptionPane.showMessageDialog(null, "Algo a salido mal: " + ex.getLocalizedMessage(), "Error",
-              JOptionPane.ERROR_MESSAGE);
-        }
-        if (botonSemantico.isEnabled()) {
-          Semantico semantico = new Semantico(tokens);
-          try {
-            boolean x = semantico.isSemanticallyCorrect();
-            if (x) {
-              JOptionPane.showMessageDialog(null, "El programa es correcto", "Correcto", JOptionPane.INFORMATION_MESSAGE);
-              botonSemantico.setEnabled(false);
-            } else {
-              JOptionPane.showMessageDialog(null, "El programa es incorrecto", "Incorrecto", JOptionPane.ERROR_MESSAGE);
-            }
-          } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Algo a salido mal: " + ex.getLocalizedMessage(), "Error",
-                JOptionPane.ERROR_MESSAGE);
-          }
-        }
         if (!botonSemantico.isEnabled()) {
           Intermedio intermedio = new Intermedio(tokens);
           try {
