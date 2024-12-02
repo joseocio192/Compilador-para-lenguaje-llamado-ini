@@ -30,7 +30,7 @@ public class Intermedio {
         if (type == TokenType.NUMBER) {
           asemblerCode.append(key).append(" dd ").append(symbolTableValor.get(key)).append("\n");
         } else if (type == TokenType.STRING) {
-          asemblerCode.append(key).append(" db ").append(symbolTableValor.get(key)).append(", 0\"\n");
+          asemblerCode.append(key).append(" db ").append(symbolTableValor.get(key)).append(", 0\n");
         }
       }
     }
@@ -162,36 +162,36 @@ public class Intermedio {
     }
     if (tokens.get(index).getTipo() == TokenType.IDENTIFICADOR) {
       String identificador = tokens.get(index).getValor();
-      codigoEnsamblador += "MOV eax, " + identificador + "\n";
+      codigoEnsamblador += "MOV ax, " + identificador + "\n";
       index++;
     } else {
-      codigoEnsamblador += "MOV eax, " + tokens.get(index).getValor() + "\n";
+      codigoEnsamblador += "MOV ax, " + tokens.get(index).getValor() + "\n";
       index++;
     }
     int tempEtiqueta = etiqueta;
     switch (tokens.get(index).getValor()) {
       case "<=":
-        codigoEnsamblador += "CMP eax, " + tokens.get(index + 1).getValor() + "\n";
+        codigoEnsamblador += "CMP ax, " + tokens.get(index + 1).getValor() + "\n";
         codigoEnsamblador += "JLE etiqueta" + etiqueta + "\n";
         break;
       case ">=":
-        codigoEnsamblador += "CMP eax, " + tokens.get(index + 1).getValor() + "\n";
+        codigoEnsamblador += "CMP ax, " + tokens.get(index + 1).getValor() + "\n";
         codigoEnsamblador += "JGE etiqueta" + etiqueta + "\n";
         break;
       case "<":
-        codigoEnsamblador += "CMP eax, " + tokens.get(index + 1).getValor() + "\n";
+        codigoEnsamblador += "CMP ax, " + tokens.get(index + 1).getValor() + "\n";
         codigoEnsamblador += "JL etiqueta" + etiqueta + "\n";
         break;
       case ">":
-        codigoEnsamblador += "CMP eax, " + tokens.get(index + 1).getValor() + "\n";
+        codigoEnsamblador += "CMP ax, " + tokens.get(index + 1).getValor() + "\n";
         codigoEnsamblador += "JG etiqueta" + etiqueta + "\n";
         break;
       case "==":
-        codigoEnsamblador += "CMP eax, " + tokens.get(index + 1).getValor() + "\n";
+        codigoEnsamblador += "CMP ax, " + tokens.get(index + 1).getValor() + "\n";
         codigoEnsamblador += "JE etiqueta" + etiqueta + "\n";
         break;
       case "!=":
-        codigoEnsamblador += "CMP eax, " + tokens.get(index + 1).getValor() + "\n";
+        codigoEnsamblador += "CMP ax, " + tokens.get(index + 1).getValor() + "\n";
         codigoEnsamblador += "JNE etiqueta" + etiqueta + "\n";
         break;
       default:
@@ -224,65 +224,65 @@ public class Intermedio {
     index++;
     if (tokens.get(index).getValor().equals("+")) {
       index++;
-      codigoEnsamblador += "MOV eax, " + identificador + "\n";
+      codigoEnsamblador += "MOV ax, " + identificador + "\n";
       if (tokens.get(index).getTipo() == TokenType.NUMBER) {
-        codigoEnsamblador += "add eax, " + tokens.get(index).getValor() + "\n";
-        codigoEnsamblador += "MOV " + identificador + ", eax\n";
+        codigoEnsamblador += "add ax, " + tokens.get(index).getValor() + "\n";
+        codigoEnsamblador += "MOV " + identificador + ", ax\n";
       } else {
-        codigoEnsamblador += "add eax, " + symbolTableValor.get(tokens.get(index).getValor()) + "\n";
-        codigoEnsamblador += "MOV " + identificador + ", eax\n";
+        codigoEnsamblador += "add ax, " + symbolTableValor.get(tokens.get(index).getValor()) + "\n";
+        codigoEnsamblador += "MOV " + identificador + ", ax\n";
       }
     } else if (tokens.get(index).getValor().equals("-")) {
       index++;
-      codigoEnsamblador += "MOV eax, " + identificador + "\n";
+      codigoEnsamblador += "MOV ax, " + identificador + "\n";
       if (tokens.get(index).getTipo() == TokenType.NUMBER) {
-        codigoEnsamblador += "sub eax, " + tokens.get(index).getValor() + "\n";
-        codigoEnsamblador += "MOV " + identificador + ", eax\n";
+        codigoEnsamblador += "sub ax, " + tokens.get(index).getValor() + "\n";
+        codigoEnsamblador += "MOV " + identificador + ", ax\n";
       } else {
-        codigoEnsamblador += "sub eax, " + symbolTableValor.get(tokens.get(index).getValor()) + "\n";
-        codigoEnsamblador += "MOV " + identificador + ", eax\n";
+        codigoEnsamblador += "sub ax, " + symbolTableValor.get(tokens.get(index).getValor()) + "\n";
+        codigoEnsamblador += "MOV " + identificador + ", ax\n";
       }
     } else if (tokens.get(index).getValor().equals("*")) {
       index++;
-      codigoEnsamblador += "MOV eax, " + identificador + "\n";
+      codigoEnsamblador += "MOV ax, " + identificador + "\n";
       if (tokens.get(index).getTipo() == TokenType.NUMBER) {
-        codigoEnsamblador += "mul eax, " + tokens.get(index).getValor() + "\n";
-        codigoEnsamblador += "MOV " + identificador + ", eax\n";
+        codigoEnsamblador += "mul ax, " + tokens.get(index).getValor() + "\n";
+        codigoEnsamblador += "MOV " + identificador + ", ax\n";
       } else {
-        codigoEnsamblador += "mul eax, " + symbolTableValor.get(tokens.get(index).getValor()) + "\n";
-        codigoEnsamblador += "MOV " + identificador + ", eax\n";
+        codigoEnsamblador += "mul ax, " + symbolTableValor.get(tokens.get(index).getValor()) + "\n";
+        codigoEnsamblador += "MOV " + identificador + ", ax\n";
       }
     } else if (tokens.get(index).getValor().equals("/")) {
       index++;
-      codigoEnsamblador += "MOV eax, " + identificador + "\n";
+      codigoEnsamblador += "MOV ax, " + identificador + "\n";
       if (tokens.get(index).getTipo() == TokenType.NUMBER) {
-        codigoEnsamblador += "div eax, " + tokens.get(index).getValor() + "\n";
-        codigoEnsamblador += "MOV " + identificador + ", eax\n";
+        codigoEnsamblador += "div ax, " + tokens.get(index).getValor() + "\n";
+        codigoEnsamblador += "MOV " + identificador + ", ax\n";
       } else {
-        codigoEnsamblador += "div eax, " + symbolTableValor.get(tokens.get(index).getValor()) + "\n";
-        codigoEnsamblador += "MOV " + identificador + ", eax\n";
+        codigoEnsamblador += "div ax, " + symbolTableValor.get(tokens.get(index).getValor()) + "\n";
+        codigoEnsamblador += "MOV " + identificador + ", ax\n";
       }
     } else if (tokens.get(index).getValor().equals("^")) {
       index++;
-      codigoEnsamblador += "MOV eax, " + identificador + "\n";
+      codigoEnsamblador += "MOV ax, " + identificador + "\n";
       if (tokens.get(index).getTipo() == TokenType.NUMBER) {
-        codigoEnsamblador += "pow eax, " + tokens.get(index).getValor() + "\n";
-        codigoEnsamblador += "MOV " + identificador + ", eax\n";
+        codigoEnsamblador += "pow ax, " + tokens.get(index).getValor() + "\n";
+        codigoEnsamblador += "MOV " + identificador + ", ax\n";
       } else {
-        codigoEnsamblador += "pow eax, " + symbolTableValor.get(tokens.get(index).getValor()) + "\n";
-        codigoEnsamblador += "MOV " + identificador + ", eax\n";
+        codigoEnsamblador += "pow ax, " + symbolTableValor.get(tokens.get(index).getValor()) + "\n";
+        codigoEnsamblador += "MOV " + identificador + ", ax\n";
       }
     } else if (tokens.get(index).getValor().equals("=")) {
       index++;
       if (tokens.get(index).getTipo() == TokenType.NUMBER) {
-        codigoEnsamblador += "MOV eax, " + tokens.get(index).getValor() + "\n";
-        codigoEnsamblador += "MOV " + identificador + ", eax\n";
+        codigoEnsamblador += "MOV ax, " + tokens.get(index).getValor() + "\n";
+        codigoEnsamblador += "MOV " + identificador + ", ax\n";
       } else if (tokens.get(index).getTipo() == TokenType.ASIGNACION) {
-        codigoEnsamblador += "MOV eax, " + tokens.get(index).getValor() + "\n";
-        codigoEnsamblador += "MOV " + identificador + ", eax\n";
+        codigoEnsamblador += "MOV ax, " + tokens.get(index).getValor() + "\n";
+        codigoEnsamblador += "MOV " + identificador + ", ax\n";
       } else {
-        codigoEnsamblador += "MOV eax, " + symbolTableValor.get(tokens.get(index).getValor()) + "\n";
-        codigoEnsamblador += "MOV " + identificador + ", eax\n";
+        codigoEnsamblador += "MOV ax, " + symbolTableValor.get(tokens.get(index).getValor()) + "\n";
+        codigoEnsamblador += "MOV " + identificador + ", ax\n";
       }
     }
   }

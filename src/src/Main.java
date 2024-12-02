@@ -78,6 +78,11 @@ public class Main {
     paneStart.add(botonIntermedio);
     botonIntermedio.setBounds(700, 40, 100, 30);
 
+    JButton botonObjeto = new JButton("Objeto");
+    botonObjeto.setEnabled(false);
+    paneStart.add(botonObjeto);
+    botonObjeto.setBounds(850, 40, 100, 30);
+
     JLabel label = new JLabel("Programa");
     label.setBounds(40, 40, 100, 30);
     paneStart.add(label);
@@ -92,6 +97,11 @@ public class Main {
     JScrollPane scrollPaneIntermedio = new JScrollPane(textAreaIntermedio);
     scrollPaneIntermedio.setBounds(700, 80, 250, 400);
     paneStart.add(scrollPaneIntermedio);
+
+    JTextArea textAreaObjeto = new JTextArea();
+    JScrollPane scrollPaneObjeto = new JScrollPane(textAreaObjeto);
+    scrollPaneObjeto.setBounds(1050, 80, 250, 400);
+    paneStart.add(scrollPaneObjeto);
 
     textAreaProgram.setFont(new Font("Arial", Font.PLAIN, 18));
 
@@ -283,6 +293,29 @@ public class Main {
            String x = intermedio.getIntermedioCode();
             textAreaIntermedio.setText(x);
             botonIntermedio.setEnabled(false);
+            botonObjeto.setEnabled(true);
+          } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Algo a salido mal: " + ex.getLocalizedMessage(), "Error",
+                JOptionPane.ERROR_MESSAGE);
+          }
+        }
+      }
+    });
+
+    // boton objeto
+    botonObjeto.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        String texto = textAreaProgram.getText() + " ";
+        Scanner scanner = new Scanner();
+        Token[] tokens = scanner.scanear(texto);
+        if (!botonIntermedio.isEnabled()) {
+          Intermedio intermedio = new Intermedio(tokens);
+          String intermedioCode = intermedio.getIntermedioCode();
+          CodigoObjeto codigoObjeto = new CodigoObjeto(intermedioCode);
+          try {
+            codigoObjeto.generarCodigoObjeto();
+            textAreaObjeto.setText(codigoObjeto.getCodigoObjeto());
+            botonObjeto.setEnabled(false);
           } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Algo a salido mal: " + ex.getLocalizedMessage(), "Error",
                 JOptionPane.ERROR_MESSAGE);
@@ -293,6 +326,8 @@ public class Main {
 
     miVentana.setVisible(true);
   }
+
+
 
   public static void main(String[] args) {
     new Main();
